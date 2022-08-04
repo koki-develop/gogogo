@@ -1,4 +1,4 @@
-module cdk.tf/go/stack
+module github.com/koki-develop/gogogo/infrastructure
 
 go 1.18
 

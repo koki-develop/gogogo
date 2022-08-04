@@ -14,6 +14,11 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	aws.NewAwsProvider(stack, jsii.String("AWS"), &aws.AwsProviderConfig{
 		Region: jsii.String("us-west-1"),
+		DefaultTags: &aws.AwsProviderDefaultTags{
+			Tags: &map[string]*string{
+				"App": jsii.String("gogogo"),
+			},
+		},
 	})
 
 	s3bucketfrontend := s3.NewS3Bucket(stack, jsii.String("s3-bucket-frontend"), &s3.S3BucketConfig{

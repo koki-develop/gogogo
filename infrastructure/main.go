@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/s3"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
@@ -25,6 +28,25 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Bucket: jsii.String("gogogo-frontend"),
 	})
 
+	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
+
+	frontendbucketpolicy := iam.NewDataAwsIamPolicyDocument(stack, jsii.String("data-iam-policy-document-frontend-bucket-policy"), &iam.DataAwsIamPolicyDocumentConfig{
+		Statement: []*iam.DataAwsIamPolicyDocumentStatement{{
+			Effect:    jsii.String("Allow"),
+			Actions:   jsii.Strings("s3:GetObject"),
+			Resources: jsii.Strings(fmt.Sprintf("%s/*", *s3bucketfrontend.Arn())),
+			Principals: []*iam.DataAwsIamPolicyDocumentStatementPrincipals{{
+				Type:        jsii.String("AWS"),
+				Identifiers: jsii.Strings(*cloudfrontoriginaccessidentity.IamArn()),
+			}},
+		}},
+	})
+
+	s3.NewS3BucketPolicy(stack, jsii.String("s3-bucket-policy-frontend"), &s3.S3BucketPolicyConfig{
+		Bucket: s3bucketfrontend.Id(),
+		Policy: frontendbucketpolicy.Json(),
+	})
+
 	s3.NewS3BucketPublicAccessBlock(stack, jsii.String("s3-public-access-block-frontend"), &s3.S3BucketPublicAccessBlockConfig{
 		Bucket:                s3bucketfrontend.Bucket(),
 		BlockPublicAcls:       jsii.Bool(true),
@@ -32,8 +54,6 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		IgnorePublicAcls:      jsii.Bool(true),
 		RestrictPublicBuckets: jsii.Bool(true),
 	})
-
-	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 
 	cloudfront.NewCloudfrontDistribution(stack, jsii.String("cloudfront-distribution-frontend"), &cloudfront.CloudfrontDistributionConfig{
 		Enabled:           jsii.Bool(true),

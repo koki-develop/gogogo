@@ -19,9 +19,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	NewAwsProvider(stack)
 
-	s3bucketfrontend := s3.NewS3Bucket(stack, jsii.String("s3-bucket-frontend"), &s3.S3BucketConfig{
-		Bucket: jsii.String("gogogo-frontend-files"),
-	})
+	s3bucketfrontend := NewS3Bucket(stack, "s3-bucket-frontend", "gogogo-frontend-files")
 
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 

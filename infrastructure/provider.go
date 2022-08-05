@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
+	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9"
 )
 
@@ -15,4 +16,8 @@ func NewAwsProvider(scope constructs.Construct) aws.AwsProvider {
 			},
 		},
 	})
+}
+
+func NewArchiveProvider(scope constructs.Construct) archive.ArchiveProvider {
+	return archive.NewArchiveProvider(scope, jsii.String("Archive"), &archive.ArchiveProviderConfig{})
 }

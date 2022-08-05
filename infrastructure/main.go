@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
+	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
@@ -17,13 +20,14 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	stack := cdktf.NewTerraformStack(scope, &id)
 
 	NewAwsProvider(stack)
+	NewArchiveProvider(stack)
 
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
 
 	NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity)
 
-	apiecrrepository := ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
+	ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
 		Name: jsii.String("gogogo-api"),
 	})
 
@@ -42,11 +46,26 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		PolicyArn: administratoraccesspolicy.Arn(),
 	})
 
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	apisourcearchive := archive.NewDataArchiveFile(stack, jsii.String("archive-file-api-source"), &archive.DataArchiveFileConfig{
+		Type:       jsii.String("zip"),
+		SourceFile: jsii.String(path.Join(cwd, "../backend/dist/api")),
+		OutputPath: jsii.String(path.Join(cwd, "dist/api.zip")),
+	})
+
 	apifunction := lambdafunction.NewLambdaFunction(stack, jsii.String("lambda-function-api"), &lambdafunction.LambdaFunctionConfig{
 		FunctionName: jsii.String("gogogo-api"),
 		Role:         apilambdafunctioniamrole.Arn(),
-		PackageType:  jsii.String("Image"),
-		ImageUri:     jsii.String(fmt.Sprintf("%s:latest", *apiecrrepository.RepositoryUrl())),
+		PackageType:  jsii.String("Zip"),
+
+		Filename:       apisourcearchive.OutputPath(),
+		Handler:        jsii.String("api"),
+		SourceCodeHash: apisourcearchive.OutputBase64Sha256(),
+		Runtime:        jsii.String("go1.x"),
 	})
 
 	apigatewayapi := apigateway.NewApiGatewayRestApi(stack, jsii.String("api-gateway-api"), &apigateway.ApiGatewayRestApiConfig{

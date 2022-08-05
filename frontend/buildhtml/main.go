@@ -1,9 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"html/template"
 	"log"
 	"os"
+	"regexp"
+
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
+	"github.com/tdewolff/minify/v2/js"
 )
 
 const tmpl = `
@@ -43,13 +49,22 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	buf := new(bytes.Buffer)
+	if err := tpl.Execute(buf, nil); err != nil {
+		log.Fatalln(err)
+	}
+
+	m := minify.New()
+	m.AddFunc("text/html", html.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
+
 	f, err := os.Create("dist/index.html")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer f.Close()
 
-	if err := tpl.Execute(f, nil); err != nil {
+	if err := m.Minify("text/html", f, buf); err != nil {
 		log.Fatalln(err)
 	}
 }

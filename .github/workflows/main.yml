@@ -30,9 +30,13 @@ jobs:
           node-version: 16
           cache: yarn
           cache-dependency-path: infrastructure/yarn.lock
-
       - name: install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: setup golang
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
 
       - name: setup terraform
         uses: hashicorp/setup-terraform@v2

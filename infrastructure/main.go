@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
@@ -26,10 +25,6 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
 
 	NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity)
-
-	ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
-		Name: jsii.String("gogogo-api"),
-	})
 
 	apilambdafunctioniamroleassumepolicy := NewAssumePolicy(stack, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
 

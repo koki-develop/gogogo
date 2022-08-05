@@ -5,7 +5,6 @@ import (
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
@@ -18,14 +17,7 @@ import (
 func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	stack := cdktf.NewTerraformStack(scope, &id)
 
-	aws.NewAwsProvider(stack, jsii.String("AWS"), &aws.AwsProviderConfig{
-		Region: jsii.String("us-east-1"),
-		DefaultTags: &aws.AwsProviderDefaultTags{
-			Tags: &map[string]*string{
-				"App": jsii.String("gogogo"),
-			},
-		},
-	})
+	NewAwsProvider(stack)
 
 	s3bucketfrontend := s3.NewS3Bucket(stack, jsii.String("s3-bucket-frontend"), &s3.S3BucketConfig{
 		Bucket: jsii.String("gogogo-frontend-files"),

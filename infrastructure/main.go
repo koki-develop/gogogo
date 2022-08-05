@@ -7,6 +7,7 @@ import (
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/s3"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
@@ -89,6 +90,10 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		ViewerCertificate: &cloudfront.CloudfrontDistributionViewerCertificate{
 			CloudfrontDefaultCertificate: jsii.Bool(true),
 		},
+	})
+
+	ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
+		Name: jsii.String("gogogo-api"),
 	})
 
 	return stack

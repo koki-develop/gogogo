@@ -19,43 +19,9 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	NewAwsProvider(stack)
 
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
-	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity.IamArn())
+	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
 
-	cloudfront.NewCloudfrontDistribution(stack, jsii.String("cloudfront-distribution-frontend"), &cloudfront.CloudfrontDistributionConfig{
-		Enabled:           jsii.Bool(true),
-		DefaultRootObject: jsii.String("index.html"),
-		Origin: []*cloudfront.CloudfrontDistributionOrigin{{
-			OriginId:   s3bucketfrontend.Id(),
-			DomainName: s3bucketfrontend.BucketRegionalDomainName(),
-			S3OriginConfig: &cloudfront.CloudfrontDistributionOriginS3OriginConfig{
-				OriginAccessIdentity: cloudfrontoriginaccessidentity.CloudfrontAccessIdentityPath(),
-			},
-		}},
-		DefaultCacheBehavior: &cloudfront.CloudfrontDistributionDefaultCacheBehavior{
-			TargetOriginId:       s3bucketfrontend.Id(),
-			AllowedMethods:       jsii.Strings("GET", "HEAD"),
-			CachedMethods:        jsii.Strings("GET", "HEAD"),
-			ViewerProtocolPolicy: jsii.String("redirect-to-https"),
-			Compress:             jsii.Bool(true),
-			MinTtl:               jsii.Number(0),
-			DefaultTtl:           jsii.Number(0), // TODO: 適切に設定する
-			MaxTtl:               jsii.Number(0), // TODO: 適切に設定する
-			ForwardedValues: &cloudfront.CloudfrontDistributionDefaultCacheBehaviorForwardedValues{
-				QueryString: jsii.Bool(false),
-				Cookies: &cloudfront.CloudfrontDistributionDefaultCacheBehaviorForwardedValuesCookies{
-					Forward: jsii.String("none"),
-				},
-			},
-		},
-		Restrictions: &cloudfront.CloudfrontDistributionRestrictions{
-			GeoRestriction: &cloudfront.CloudfrontDistributionRestrictionsGeoRestriction{
-				RestrictionType: jsii.String("none"),
-			},
-		},
-		ViewerCertificate: &cloudfront.CloudfrontDistributionViewerCertificate{
-			CloudfrontDefaultCertificate: jsii.Bool(true),
-		},
-	})
+	NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity)
 
 	apiecrrepository := ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
 		Name: jsii.String("gogogo-api"),

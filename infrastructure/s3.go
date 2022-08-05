@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/s3"
 )
@@ -24,7 +25,7 @@ func NewS3PublicAccessBlock(scope constructs.Construct, id string, bucket *strin
 }
 
 // フロントエンドの静的ファイル配置用の S3 バケット
-func NewS3Frontend(scope constructs.Construct, identityIDArn *string) s3.S3Bucket {
+func NewS3Frontend(scope constructs.Construct, identity cloudfront.CloudfrontOriginAccessIdentity) s3.S3Bucket {
 	bucket := NewS3Bucket(scope, "s3-bucket-frontend", "gogogo-frontend-files")
 
 	NewS3PublicAccessBlock(scope, "s3-public-access-block-frontend", bucket.Bucket())
@@ -36,7 +37,7 @@ func NewS3Frontend(scope constructs.Construct, identityIDArn *string) s3.S3Bucke
 			Resources: jsii.Strings(fmt.Sprintf("%s/*", *bucket.Arn())),
 			Principals: []*iam.DataAwsIamPolicyDocumentStatementPrincipals{{
 				Type:        jsii.String("AWS"),
-				Identifiers: &[]*string{identityIDArn},
+				Identifiers: &[]*string{identity.IamArn()},
 			}},
 		}},
 	})

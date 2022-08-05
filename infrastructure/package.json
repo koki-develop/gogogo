@@ -1,6 +1,11 @@
 {
   "name": "gogogo-infrastructure",
   "license": "MIT",
+  "scripts": {
+    "plan": "cdktf plan",
+    "apply": "cdktf apply",
+    "apply:auto-approve": "cdktf apply --auto-approve"
+  },
   "devDependencies": {
     "cdktf-cli": "^0.12.0"
   }

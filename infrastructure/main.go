@@ -160,7 +160,6 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	apigatewaydeployment := apigateway.NewApiGatewayDeployment(stack, jsii.String("api-gateway-deployment"), &apigateway.ApiGatewayDeploymentConfig{
 		RestApiId: apigatewayapi.Id(),
-		StageName: jsii.String("prod"),
 		Lifecycle: &cdktf.TerraformResourceLifecycle{
 			CreateBeforeDestroy: jsii.Bool(true),
 		},

@@ -12,4 +12,4 @@ tasks:
   deploy:
     deps: [build]
     cmds:
-      - aws s3 sync --delete ./dist/ s3://gogogo-frontend
+      - aws s3 sync --delete ./dist/ s3://gogogo-frontend-files

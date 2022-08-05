@@ -17,7 +17,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	stack := cdktf.NewTerraformStack(scope, &id)
 
 	aws.NewAwsProvider(stack, jsii.String("AWS"), &aws.AwsProviderConfig{
-		Region: jsii.String("us-west-1"),
+		Region: jsii.String("us-east-1"),
 		DefaultTags: &aws.AwsProviderDefaultTags{
 			Tags: &map[string]*string{
 				"App": jsii.String("gogogo"),

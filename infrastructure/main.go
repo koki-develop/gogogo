@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/s3"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
@@ -92,8 +93,39 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		},
 	})
 
-	ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
+	apiecrrepository := ecr.NewEcrRepository(stack, jsii.String("ecr-repository-api"), &ecr.EcrRepositoryConfig{
 		Name: jsii.String("gogogo-api"),
+	})
+
+	apilambdafunctioniamroleassumepolicy := iam.NewDataAwsIamPolicyDocument(stack, jsii.String("data-iam-policy-document-api-assume-policy"), &iam.DataAwsIamPolicyDocumentConfig{
+		Statement: []*iam.DataAwsIamPolicyDocumentStatement{{
+			Effect:  jsii.String("Allow"),
+			Actions: jsii.Strings("sts:AssumeRole"),
+			Principals: []*iam.DataAwsIamPolicyDocumentStatementPrincipals{{
+				Type:        jsii.String("Service"),
+				Identifiers: jsii.Strings("lambda.amazonaws.com"),
+			}},
+		}},
+	})
+
+	apilambdafunctioniamrole := iam.NewIamRole(stack, jsii.String("iam-role-api"), &iam.IamRoleConfig{
+		Name:             jsii.String("gogogo-api-role"),
+		AssumeRolePolicy: apilambdafunctioniamroleassumepolicy.Json(),
+	})
+
+	administratoraccesspolicy := iam.NewDataAwsIamPolicy(stack, jsii.String("iam-policy-adoministrator-access"), &iam.DataAwsIamPolicyConfig{
+		Arn: jsii.String("arn:aws:iam::aws:policy/AdministratorAccess"),
+	})
+	iam.NewIamRolePolicyAttachment(stack, jsii.String("iam-role-policy-attachment-api-administorator-access-to-lambda-function-iam-role"), &iam.IamRolePolicyAttachmentConfig{
+		Role:      apilambdafunctioniamrole.Name(),
+		PolicyArn: administratoraccesspolicy.Arn(),
+	})
+
+	lambdafunction.NewLambdaFunction(stack, jsii.String("lambda-function-api"), &lambdafunction.LambdaFunctionConfig{
+		FunctionName: jsii.String("gogogo-api"),
+		Role:         apilambdafunctioniamrole.Arn(),
+		PackageType:  jsii.String("Image"),
+		ImageUri:     jsii.String(fmt.Sprintf("%s:latest", *apiecrrepository.RepositoryUrl())),
 	})
 
 	return stack

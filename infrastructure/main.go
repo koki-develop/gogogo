@@ -6,8 +6,8 @@ import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudwatch"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
@@ -28,7 +28,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	})
 
 	s3bucketfrontend := s3.NewS3Bucket(stack, jsii.String("s3-bucket-frontend"), &s3.S3BucketConfig{
-		Bucket: jsii.String("gogogo-frontend"),
+		BucketPrefix: jsii.String("gogogo-frontend"),
 	})
 
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
@@ -129,8 +129,54 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		ImageUri:     jsii.String(fmt.Sprintf("%s:latest", *apiecrrepository.RepositoryUrl())),
 	})
 
-	cloudwatch.NewCloudwatchLogGroup(stack, jsii.String("log-group-api"), &cloudwatch.CloudwatchLogGroupConfig{
-		Name: jsii.String(fmt.Sprintf("/aws/lambda/%s", *apifunction.FunctionName())),
+	apigatewayapi := apigateway.NewApiGatewayRestApi(stack, jsii.String("api-gateway-api"), &apigateway.ApiGatewayRestApiConfig{
+		Name: jsii.String("gogogo-api"),
+		EndpointConfiguration: &apigateway.ApiGatewayRestApiEndpointConfiguration{
+			Types: jsii.Strings("EDGE"),
+		},
+	})
+
+	apigatewayapiresource := apigateway.NewApiGatewayResource(stack, jsii.String("api-gateway-api-resource"), &apigateway.ApiGatewayResourceConfig{
+		ParentId:  apigatewayapi.RootResourceId(),
+		PathPart:  jsii.String("{proxy+}"),
+		RestApiId: apigatewayapi.Id(),
+	})
+
+	apigatewayapiresourceany := apigateway.NewApiGatewayMethod(stack, jsii.String("api-gateway-api-resource-any"), &apigateway.ApiGatewayMethodConfig{
+		HttpMethod:    jsii.String("ANY"),
+		ResourceId:    apigatewayapiresource.Id(),
+		RestApiId:     apigatewayapi.Id(),
+		Authorization: jsii.String("NONE"),
+	})
+
+	apigateway.NewApiGatewayIntegration(stack, jsii.String("api-gateway-api-integration"), &apigateway.ApiGatewayIntegrationConfig{
+		RestApiId:             apigatewayapi.Id(),
+		ResourceId:            apigatewayapiresourceany.ResourceId(),
+		HttpMethod:            apigatewayapiresourceany.HttpMethod(),
+		IntegrationHttpMethod: jsii.String("POST"),
+		Type:                  jsii.String("AWS_PROXY"),
+		Uri:                   apifunction.InvokeArn(),
+	})
+
+	apigatewaydeployment := apigateway.NewApiGatewayDeployment(stack, jsii.String("api-gateway-deployment"), &apigateway.ApiGatewayDeploymentConfig{
+		RestApiId: apigatewayapi.Id(),
+		StageName: jsii.String("prod"),
+		Lifecycle: &cdktf.TerraformResourceLifecycle{
+			CreateBeforeDestroy: jsii.Bool(true),
+		},
+	})
+
+	apigateway.NewApiGatewayStage(stack, jsii.String("api-gateway-stage"), &apigateway.ApiGatewayStageConfig{
+		RestApiId:    apigatewayapi.Id(),
+		DeploymentId: apigatewaydeployment.Id(),
+		StageName:    jsii.String("prod"),
+	})
+
+	lambdafunction.NewLambdaPermission(stack, jsii.String("lambda-function-permission-api"), &lambdafunction.LambdaPermissionConfig{
+		Action:       jsii.String("lambda:InvokeFunction"),
+		FunctionName: apifunction.FunctionName(),
+		Principal:    jsii.String("apigateway.amazonaws.com"),
+		SourceArn:    jsii.String(fmt.Sprintf("%s/*/*", *apigatewayapi.ExecutionArn())),
 	})
 
 	return stack

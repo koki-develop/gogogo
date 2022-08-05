@@ -10,4 +10,7 @@ require (
 	github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0
 )
 
-require github.com/Masterminds/semver/v3 v3.1.1 // indirect
+require (
+	github.com/Masterminds/semver/v3 v3.1.1 // indirect
+	github.com/hashicorp/cdktf-provider-archive-go/archive v1.0.2 // indirect
+)

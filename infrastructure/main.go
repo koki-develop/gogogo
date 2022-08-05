@@ -7,6 +7,7 @@ import (
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudwatch"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/ecr"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
@@ -121,11 +122,15 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		PolicyArn: administratoraccesspolicy.Arn(),
 	})
 
-	lambdafunction.NewLambdaFunction(stack, jsii.String("lambda-function-api"), &lambdafunction.LambdaFunctionConfig{
+	apifunction := lambdafunction.NewLambdaFunction(stack, jsii.String("lambda-function-api"), &lambdafunction.LambdaFunctionConfig{
 		FunctionName: jsii.String("gogogo-api"),
 		Role:         apilambdafunctioniamrole.Arn(),
 		PackageType:  jsii.String("Image"),
 		ImageUri:     jsii.String(fmt.Sprintf("%s:latest", *apiecrrepository.RepositoryUrl())),
+	})
+
+	cloudwatch.NewCloudwatchLogGroup(stack, jsii.String("log-group-api"), &cloudwatch.CloudwatchLogGroupConfig{
+		Name: jsii.String(fmt.Sprintf("/aws/lambda/%s", *apifunction.FunctionName())),
 	})
 
 	return stack

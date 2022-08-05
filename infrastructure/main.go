@@ -27,16 +27,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Name: jsii.String("gogogo-api"),
 	})
 
-	apilambdafunctioniamroleassumepolicy := iam.NewDataAwsIamPolicyDocument(stack, jsii.String("data-iam-policy-document-api-assume-policy"), &iam.DataAwsIamPolicyDocumentConfig{
-		Statement: []*iam.DataAwsIamPolicyDocumentStatement{{
-			Effect:  jsii.String("Allow"),
-			Actions: jsii.Strings("sts:AssumeRole"),
-			Principals: []*iam.DataAwsIamPolicyDocumentStatementPrincipals{{
-				Type:        jsii.String("Service"),
-				Identifiers: jsii.Strings("lambda.amazonaws.com"),
-			}},
-		}},
-	})
+	apilambdafunctioniamroleassumepolicy := NewAssumePolicy(stack, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
 
 	apilambdafunctioniamrole := iam.NewIamRole(stack, jsii.String("iam-role-api"), &iam.IamRoleConfig{
 		Name:             jsii.String("gogogo-api-role"),

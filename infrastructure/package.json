@@ -1,4 +1,7 @@
 {
   "name": "gogogo-infrastructure",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "cdktf-cli": "^0.12.0"
+  }
 }

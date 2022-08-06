@@ -15,7 +15,7 @@ type CatsView struct {
 }
 
 func (v *CatsView) Render() vecty.ComponentOrHTML {
-	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/v1/cats", nil)
+	req, _ := http.NewRequest(http.MethodGet, "https://dkasns0wq3.execute-api.us-east-1.amazonaws.com/prod/v1/cats", nil)
 	resp, _ := new(http.Client).Do(req)
 	defer resp.Body.Close()
 

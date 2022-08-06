@@ -6,8 +6,34 @@ on:
       - main
 
 jobs:
+  build_backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup golang
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+          cache: true
+          cache-dependency-path: backend/go.sum
+      - name: build
+        env:
+          GOARCH: amd64
+          GOOS: linux
+        run: go build -ldflags="-s -w" -o dist/api pkg/handlers/api/lambda/main.go
+      - name: upload binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-binary
+          path: backend/dist/api
+
   deploy_infrastructure:
     runs-on: ubuntu-latest
+    needs: [build_backend]
     defaults:
       run:
         working-directory: infrastructure
@@ -22,6 +48,10 @@ jobs:
         with:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      - name: download api binary
+        uses: actions/download-artifact@v3
+        with:
+          name: api-binary
       - name: setup nodejs
         uses: actions/setup-node@v3
         with:
@@ -66,37 +96,9 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '1.18'
+          cache: true
+          cache-dependency-path: frontend/go.sum
       - name: install go-task
         uses: arduino/setup-task@v1
       - name: deploy
         run: task deploy
-
-  deploy_backend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: configure aws
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-      - name: login to ecr
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: build and push docker image to ecr
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: gogogo-api
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          aws lambda update-function-code --function-name gogogo-api --image-uri $REGISTRY/$REPOSITORY:$IMAGE_TAG

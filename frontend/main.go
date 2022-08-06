@@ -2,24 +2,16 @@ package main
 
 import (
 	"github.com/hexops/vecty"
-	"github.com/hexops/vecty/elem"
+	"github.com/koki-develop/gogogo/frontend/pkg/views"
 )
 
-type PageView struct {
+type CatsView struct {
 	vecty.Core
 }
 
-func (v *PageView) Render() vecty.ComponentOrHTML {
-	vecty.SetTitle("GoGoGo")
-
-	return elem.Body(
-		elem.Heading1(vecty.Text("GoGoGo")),
-		elem.Paragraph(vecty.Text("Hello World")),
-	)
-}
-
 func main() {
-	v := &PageView{}
+	v := views.NewCatsView()
 
+	vecty.SetTitle("GoGoGo")
 	vecty.RenderBody(v)
 }

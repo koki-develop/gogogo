@@ -21,6 +21,8 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	NewAwsProvider(stack)
 	NewArchiveProvider(stack)
 
+	catsAPIKey := os.Getenv("CATS_API_KEY")
+
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
 
@@ -63,6 +65,12 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Handler:        jsii.String("api"),
 		SourceCodeHash: apisourcearchive.OutputBase64Sha256(),
 		Runtime:        jsii.String("go1.x"),
+
+		Environment: &lambdafunction.LambdaFunctionEnvironment{
+			Variables: &map[string]*string{
+				"CATS_API_KEY": &catsAPIKey,
+			},
+		},
 	})
 
 	apigatewayapi := apigateway.NewApiGatewayRestApi(stack, jsii.String("api-gateway-api"), &apigateway.ApiGatewayRestApiConfig{

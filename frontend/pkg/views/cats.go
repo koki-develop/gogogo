@@ -46,10 +46,21 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 
 	imgs := components.NewCatImages(cats)
 
+	repolink := elem.Anchor(vecty.Text("View on GitHub"))
+	vecty.Markup(
+		vecty.Attribute("href", "https://github.com/koki-develop/gogogo"),
+		vecty.Attribute("target", "_blank"),
+		vecty.Attribute("rel", "noopener noreferrer"),
+	).Apply(repolink)
+
+	footer := elem.Div(repolink)
+	vecty.Markup(vecty.Class("text-center"), vecty.Class("my-12")).Apply(footer)
+
 	container := elem.Div(
 		ttl,
 		poweredby,
 		imgs,
+		footer,
 	)
 	vecty.Markup(
 		vecty.Class("container"),

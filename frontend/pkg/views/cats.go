@@ -24,7 +24,20 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 
 	imgs := components.NewCatImages(cats)
 
-	return elem.Body(imgs)
+	container := elem.Div(imgs)
+	vecty.Markup(
+		vecty.Class("container"),
+	).Apply(container)
+
+	root := elem.Div(container)
+	vecty.Markup(
+		vecty.Class("flex"),
+		vecty.Class("justify-center"),
+		vecty.Class("px-4"),
+		vecty.Class("sm:px-16"),
+	).Apply(root)
+
+	return elem.Body(root)
 }
 
 func NewCatsView() *CatsView {

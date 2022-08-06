@@ -10,7 +10,8 @@ func NewCatImage(cat *entities.Cat) vecty.MarkupOrChild {
 	img := elem.Image()
 	vecty.Markup(
 		vecty.Attribute("src", cat.URL),
-		vecty.Attribute("width", 120),
+		vecty.Class("w-full"),
+		vecty.Class("object-cover"),
 	).Apply(img)
 	return img
 }
@@ -19,8 +20,21 @@ func NewCatImages(cats entities.Cats) vecty.MarkupOrChild {
 	var items []vecty.MarkupOrChild
 	for _, cat := range cats {
 		img := NewCatImage(cat)
-		items = append(items, elem.ListItem(img))
+		item := elem.ListItem(img)
+		vecty.Markup(
+			vecty.Class("flex"),
+			vecty.Class("justify-center"),
+		).Apply(item)
+
+		items = append(items, item)
 	}
 
-	return elem.UnorderedList(items...)
+	list := elem.UnorderedList(items...)
+	vecty.Markup(
+		vecty.Class("grid"),
+		vecty.Class("grid-cols-2"),
+		vecty.Class("md:grid-cols-4"),
+	).Apply(list)
+
+	return list
 }

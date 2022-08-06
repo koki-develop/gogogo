@@ -52,6 +52,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: api-binary
+          path: backend/dist/api
       - name: setup nodejs
         uses: actions/setup-node@v3
         with:

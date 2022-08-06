@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: api-binary
-          path: backend/dist/api
+          path: backend/dist
 
   deploy_infrastructure:
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: api-binary
-          path: backend/dist/api
+          path: backend/dist
       - name: setup nodejs
         uses: actions/setup-node@v3
         with:

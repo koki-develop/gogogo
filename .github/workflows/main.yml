@@ -75,6 +75,8 @@ jobs:
           terraform_version: 1.2.3
           terraform_wrapper: false
       - name: apply
+        env:
+          CATS_API_KEY: ${{ secrets.CATS_API_KEY }}
         run: yarn apply:auto-approve
 
   deploy_frontend:

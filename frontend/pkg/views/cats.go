@@ -22,9 +22,35 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 	var cats entities.Cats
 	json.NewDecoder(resp.Body).Decode(&cats)
 
+	ttl := elem.Heading1(
+		vecty.Text("GoGoGo"),
+	)
+	vecty.Markup(
+		vecty.Class("text-center"),
+		vecty.Class("text-3xl"),
+	).Apply(ttl)
+
+	catsapilink := elem.Anchor(vecty.Text("The Cat API"))
+	vecty.Markup(
+		vecty.Class("text-blue-500"),
+		vecty.Attribute("href", "https://thecatapi.com/"),
+		vecty.Attribute("target", "_blank"),
+		vecty.Attribute("rel", "noopener noreferrer"),
+	).Apply(catsapilink)
+
+	poweredby := elem.Paragraph(vecty.Text("powered by "), catsapilink)
+	vecty.Markup(
+		vecty.Class("text-center"),
+		vecty.Class("mb-4"),
+	).Apply(poweredby)
+
 	imgs := components.NewCatImages(cats)
 
-	container := elem.Div(imgs)
+	container := elem.Div(
+		ttl,
+		poweredby,
+		imgs,
+	)
 	vecty.Markup(
 		vecty.Class("container"),
 	).Apply(container)
@@ -33,7 +59,7 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 	vecty.Markup(
 		vecty.Class("flex"),
 		vecty.Class("justify-center"),
-		vecty.Class("px-4"),
+		vecty.Class("p-4"),
 		vecty.Class("sm:px-16"),
 	).Apply(root)
 

@@ -24,6 +24,8 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
 
+	NewS3Cats(stack)
+
 	NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity)
 
 	apilambdafunctioniamroleassumepolicy := NewAssumePolicy(stack, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")

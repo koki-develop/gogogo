@@ -48,3 +48,11 @@ func NewS3Frontend(scope constructs.Construct, identity cloudfront.CloudfrontOri
 
 	return bucket
 }
+
+func NewS3Cats(scope constructs.Construct) s3.S3Bucket {
+	bucket := NewS3Bucket(scope, "s3-bucket-cats", "gogogo-cats")
+
+	NewS3PublicAccessBlock(scope, "s3-public-access-block-cats", bucket.Bucket())
+
+	return bucket
+}

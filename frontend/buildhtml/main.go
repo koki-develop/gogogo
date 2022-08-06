@@ -22,7 +22,7 @@ const tmpl = `
   </head>
 
   <body>
-    <p>Loading...</p>
+    <p class="text-center mt-4">Loading...</p>
 
     <script src="wasm_exec.js"></script>
     <script>

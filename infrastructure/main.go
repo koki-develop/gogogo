@@ -56,7 +56,18 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	NewS3Cats(stack)
 
-	NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity)
+	uicloudfront := NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity, uiacm)
+
+	route53.NewRoute53Record(stack, jsii.String("route53-record-frontend"), &route53.Route53RecordConfig{
+		ZoneId: hostzone.Id(),
+		Name:   jsii.String("go55.dev"),
+		Type:   jsii.String("A"),
+		Alias: []*route53.Route53RecordAlias{{
+			Name:                 uicloudfront.DomainName(),
+			ZoneId:               uicloudfront.HostedZoneId(),
+			EvaluateTargetHealth: jsii.Bool(false),
+		}},
+	})
 
 	apilambdafunctioniamroleassumepolicy := NewAssumePolicy(stack, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
 

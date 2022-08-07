@@ -12,4 +12,9 @@ tasks:
   deploy:
     deps: [build]
     cmds:
-      - aws s3 sync --delete ./dist/ s3://gogogo-frontend-files
+      - aws s3 cp ./dist/index.html   s3://gogogo-frontend-files/index.html
+      - aws s3 cp ./dist/wasm_exec.js s3://gogogo-frontend-files/wasm_exec.js
+
+      # 参考: https://stackoverflow.com/questions/51033550/how-to-manually-gzip-files-for-web-and-amazon-cloudfront
+      - gzip ./dist/main.wasm
+      - aws s3 cp ./dist/main.wasm.gz s3://gogogo-frontend-files/main.wasm --content-encoding gzip --content-type application/wasm

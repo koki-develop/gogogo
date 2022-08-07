@@ -411,7 +411,7 @@ case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdktf-cli@^0.12.0:
+cdktf-cli@0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/cdktf-cli/-/cdktf-cli-0.12.0.tgz#969e1d8cfe31733f8dbc603822be05a760f42af6"
   integrity sha512-wtHAZDdzV5LE8RIAXHV6AVFV5hrP9Wk0HjgEMngWqeHYJqLhH8BBTxwziZxMFdT0JbCkDAg83RMSxyfRqRPqYQ==

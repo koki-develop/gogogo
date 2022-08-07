@@ -8,10 +8,12 @@ import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-archive-go/archive"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/acm"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/route53"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
@@ -20,6 +22,32 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	NewAwsProvider(stack)
 	NewArchiveProvider(stack)
+
+	hostzone := route53.NewDataAwsRoute53Zone(stack, jsii.String("route53-zone-default"), &route53.DataAwsRoute53ZoneConfig{
+		Name:        jsii.String("go55.dev"),
+		PrivateZone: jsii.Bool(false),
+	})
+
+	uiacm := acm.NewAcmCertificate(stack, jsii.String("acm-certificate-frontend"), &acm.AcmCertificateConfig{
+		DomainName:       jsii.String("go55.dev"),
+		ValidationMethod: jsii.String("DNS"),
+		Lifecycle: &cdktf.TerraformResourceLifecycle{
+			CreateBeforeDestroy: jsii.Bool(true),
+		},
+	})
+
+	uiacmvalicationrecord := route53.NewRoute53Record(stack, jsii.String("route53-record-api-certificate-validation"), &route53.Route53RecordConfig{
+		ZoneId:  hostzone.ZoneId(),
+		Name:    uiacm.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordName(),
+		Type:    uiacm.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordType(),
+		Records: &[]*string{uiacm.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordValue()},
+		Ttl:     jsii.Number(60),
+	})
+
+	acm.NewAcmCertificateValidation(stack, jsii.String("acm-certificate-validation-frontend"), &acm.AcmCertificateValidationConfig{
+		CertificateArn:        uiacm.Arn(),
+		ValidationRecordFqdns: &[]*string{uiacmvalicationrecord.Fqdn()},
+	})
 
 	catsAPIKey := os.Getenv("CATS_API_KEY")
 

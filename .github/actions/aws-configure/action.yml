@@ -1,6 +1,11 @@
 name: aws configure
 description: ""
 
+inputs:
+  aws-iam-role-arn:
+    description: ""
+    required: true
+
 runs:
   using: composite
   steps:
@@ -8,4 +13,4 @@ runs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-region: us-east-1
-        role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+        role-to-assume: ${{ inputs.aws-iam-role-arn }}

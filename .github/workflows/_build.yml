@@ -50,6 +50,8 @@ jobs:
         uses: ./.github/actions/setup-terraform
       - name: aws configure
         uses: ./.github/actions/aws-configure
+        with:
+          aws-iam-role-arn: ${{ secrets.AWS_IAM_ROLE_ARN }}
       # build
       - name: download backend artifact
         uses: actions/download-artifact@v3

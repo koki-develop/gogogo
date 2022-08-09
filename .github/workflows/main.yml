@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/_build.yml
+    secrets: inherit
 
   deploy_infrastructure:
     needs: [build]

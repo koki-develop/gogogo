@@ -1,31 +1,43 @@
 name: build
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
-  build:
-    uses: ./.github/workflows/_build.yml
+  build_backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup golang
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+          cache: true
+          cache-dependency-path: backend/go.sum
+      - name: build
+        env:
+          GOARCH: amd64
+          GOOS: linux
+        run: go build -ldflags="-s -w" -o dist/api pkg/handlers/api/lambda/main.go
+      - name: upload backend artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-artifact
+          path: backend/dist
 
-  deploy_infrastructure:
-    needs: [build]
+  build_infrastructure:
+    needs: [build_backend]
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: infrastructure
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - name: checkout
         uses: actions/checkout@v3
-      - name: configure aws
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
       - name: download backend artifact
         uses: actions/download-artifact@v3
         with:
@@ -52,20 +64,16 @@ jobs:
         with:
           terraform_version: 1.2.3
           terraform_wrapper: false
-      - name: apply
+      - name: plan
         env:
           CATS_API_KEY: ${{ secrets.CATS_API_KEY }}
-        run: yarn apply:auto-approve
+        run: yarn plan
 
-  deploy_frontend:
-    needs: [build]
+  build_frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -75,17 +83,12 @@ jobs:
           go-version: '1.18'
           cache: true
           cache-dependency-path: frontend/go.sum
-      - name: configure aws
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-      - name: download frontend artifact
-        uses: actions/download-artifact@v3
+      - name: setup go-task
+        uses: arduino/setup-task@v1
+      - name: build
+        run: task build
+      - name: upload frontend artifact
+        uses: actions/upload-artifact@v3
         with:
           name: frontend-artifact
           path: frontend/dist
-      - name: setup go-task
-        uses: arduino/setup-task@v1
-      - name: deploy
-        run: task deploy-only

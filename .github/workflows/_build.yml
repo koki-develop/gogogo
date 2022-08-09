@@ -2,6 +2,11 @@ name: build
 
 on:
   workflow_call:
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      CATS_API_KEY:
+        required: true
 
 jobs:
   build_backend:

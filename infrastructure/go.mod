@@ -1,6 +1,6 @@
 module github.com/koki-develop/gogogo/infrastructure
 
-go 1.18
+go 1.19
 
 require github.com/aws/constructs-go/constructs/v10 v10.1.70
 

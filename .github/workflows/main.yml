@@ -80,3 +80,12 @@ jobs:
           path: frontend/dist
       - name: deploy
         run: task deploy-only
+      - name: clear cloudfront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id $(
+              aws cloudfront list-distributions \
+                --query 'DistributionList.Items[?Aliases.Items[0]==`go55.dev`].Id' \
+                --output text
+            ) \
+            --paths "/*"

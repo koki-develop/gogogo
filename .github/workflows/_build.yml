@@ -48,6 +48,8 @@ jobs:
           working-directory: infrastructure
       - name: setup terraform
         uses: ./.github/actions/setup-terraform
+      - name: aws configure
+        uses: ./.github/actions/aws-configure
       # build
       - name: download backend artifact
         uses: actions/download-artifact@v3

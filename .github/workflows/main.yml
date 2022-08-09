@@ -32,11 +32,8 @@ jobs:
           working-directory: infrastructure
       - name: setup terraform
         uses: ./.github/actions/setup-terraform
-      - name: configure aws
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      - name: aws configure
+        uses: ./.github/actions/aws-configure
       # deploy
       - name: download backend artifact
         uses: actions/download-artifact@v3
@@ -67,11 +64,8 @@ jobs:
           working-directory: frontend
       - name: setup go-task
         uses: arduino/setup-task@v1
-      - name: configure aws
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      - name: aws configure
+        uses: ./.github/actions/aws-configure
       # deploy
       - name: download frontend artifact
         uses: actions/download-artifact@v3

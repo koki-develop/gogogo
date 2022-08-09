@@ -5,7 +5,7 @@ on:
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true
-      CATS_API_KEY:
+      CAT_API_KEY:
         required: true
 
 jobs:
@@ -65,7 +65,7 @@ jobs:
           path: backend/dist
       - name: plan
         env:
-          CATS_API_KEY: ${{ secrets.CATS_API_KEY }}
+          CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
         run: yarn plan
 
   build_frontend:

@@ -49,7 +49,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		ValidationRecordFqdns: &[]*string{uiacmvalicationrecord.Fqdn()},
 	})
 
-	catsAPIKey := os.Getenv("CATS_API_KEY")
+	catsAPIKey := os.Getenv("CAT_API_KEY")
 
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
@@ -107,7 +107,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 		Environment: &lambdafunction.LambdaFunctionEnvironment{
 			Variables: &map[string]*string{
-				"CATS_API_KEY": &catsAPIKey,
+				"CAT_API_KEY": &catsAPIKey,
 			},
 		},
 	})

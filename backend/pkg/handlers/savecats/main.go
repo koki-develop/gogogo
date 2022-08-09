@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	apiKey := os.Getenv("CATS_API_KEY")
+	apiKey := os.Getenv("CAT_API_KEY")
 
 	catscl := catsapi.New(apiKey)
 	s3cl := s3.New()

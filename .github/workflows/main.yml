@@ -45,7 +45,7 @@ jobs:
           path: backend/dist
       - name: apply
         env:
-          CATS_API_KEY: ${{ secrets.CATS_API_KEY }}
+          CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
         run: yarn apply:auto-approve
 
   deploy_frontend:

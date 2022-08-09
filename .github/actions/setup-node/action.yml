@@ -1,0 +1,20 @@
+name: setup node
+description: ""
+
+inputs:
+  working-directory:
+    description: ""
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: setup nodejs
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: yarn
+        cache-dependency-path: ${{ inputs.working-directory }}/yarn.lock
+    - name: install dependencies
+      shell: bash
+      run: yarn install --frozen-lockfile

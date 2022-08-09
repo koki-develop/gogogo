@@ -10,12 +10,14 @@ jobs:
       run:
         working-directory: backend
     steps:
+      # setup
       - name: checkout
         uses: actions/checkout@v3
       - name: setup golang
         uses: ./.github/actions/setup-go/action.yml
         with:
           working-directory: backend
+      # build
       - name: build
         env:
           GOARCH: amd64
@@ -34,30 +36,25 @@ jobs:
       run:
         working-directory: infrastructure
     steps:
+      # setup
       - name: checkout
         uses: actions/checkout@v3
-      - name: download backend artifact
-        uses: actions/download-artifact@v3
+      - name: setup node
+        uses: ./.github/actions/setup-node/action.yml
         with:
-          name: backend-artifact
-          path: backend/dist
-      - name: setup nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: yarn
-          cache-dependency-path: infrastructure/yarn.lock
-      - name: install dependencies
-        run: yarn install --frozen-lockfile
+          working-directory: infrastructure
       - name: setup golang
         uses: ./.github/actions/setup-go/action.yml
         with:
           working-directory: infrastructure
       - name: setup terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: ./.github/actions/setup-terraform/action.yml
+      # build
+      - name: download backend artifact
+        uses: actions/download-artifact@v3
         with:
-          terraform_version: 1.2.3
-          terraform_wrapper: false
+          name: backend-artifact
+          path: backend/dist
       - name: plan
         env:
           CATS_API_KEY: ${{ secrets.CATS_API_KEY }}
@@ -69,6 +66,7 @@ jobs:
       run:
         working-directory: frontend
     steps:
+      # setup
       - name: checkout
         uses: actions/checkout@v3
       - name: setup golang
@@ -77,6 +75,7 @@ jobs:
           working-directory: frontend
       - name: setup go-task
         uses: arduino/setup-task@v1
+      # build
       - name: build
         run: task build
       - name: upload frontend artifact

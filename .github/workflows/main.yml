@@ -19,39 +19,30 @@ jobs:
       id-token: write
       contents: read
     steps:
+      # setup
       - name: checkout
         uses: actions/checkout@v3
+      - name: setup node
+        uses: ./.github/actions/setup-node/action.yml
+        with:
+          working-directory: infrastructure
+      - name: setup golang
+        uses: ./.github/actions/setup-go/action.yml
+        with:
+          working-directory: infrastructure
+      - name: setup terraform
+        uses: ./.github/actions/setup-terraform/action.yml
       - name: configure aws
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      # deploy
       - name: download backend artifact
         uses: actions/download-artifact@v3
         with:
           name: backend-artifact
           path: backend/dist
-      - name: setup nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: yarn
-          cache-dependency-path: infrastructure/yarn.lock
-      - name: install dependencies
-        run: yarn install --frozen-lockfile
-      - name: setup golang
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.18'
-          cache: true
-          cache-dependency-path: infrastructure/go.sum
-      - name: go mod download
-        run: go mod download -x
-      - name: setup terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.3
-          terraform_wrapper: false
       - name: apply
         env:
           CATS_API_KEY: ${{ secrets.CATS_API_KEY }}
@@ -67,25 +58,25 @@ jobs:
       id-token: write
       contents: read
     steps:
+      # setup
       - name: checkout
         uses: actions/checkout@v3
       - name: setup golang
-        uses: actions/setup-go@v3
+        uses: ./.github/actions/setup-go/action.yml
         with:
-          go-version: '1.18'
-          cache: true
-          cache-dependency-path: frontend/go.sum
+          working-directory: frontend
+      - name: setup go-task
+        uses: arduino/setup-task@v1
       - name: configure aws
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      # deploy
       - name: download frontend artifact
         uses: actions/download-artifact@v3
         with:
           name: frontend-artifact
           path: frontend/dist
-      - name: setup go-task
-        uses: arduino/setup-task@v1
       - name: deploy
         run: task deploy-only

@@ -36,6 +36,9 @@ jobs:
   build_infrastructure:
     needs: [build_backend]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     defaults:
       run:
         working-directory: infrastructure

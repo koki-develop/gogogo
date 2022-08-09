@@ -13,11 +13,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: setup golang
-        uses: actions/setup-go@v3
+        uses: ./.github/actions/setup-go/action.yml
         with:
-          go-version: '1.18'
-          cache: true
-          cache-dependency-path: backend/go.sum
+          working-directory: backend
       - name: build
         env:
           GOARCH: amd64
@@ -52,13 +50,9 @@ jobs:
       - name: install dependencies
         run: yarn install --frozen-lockfile
       - name: setup golang
-        uses: actions/setup-go@v3
+        uses: ./.github/actions/setup-go/action.yml
         with:
-          go-version: '1.18'
-          cache: true
-          cache-dependency-path: infrastructure/go.sum
-      - name: go mod download
-        run: go mod download -x
+          working-directory: infrastructure
       - name: setup terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -78,11 +72,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: setup golang
-        uses: actions/setup-go@v3
+        uses: ./.github/actions/setup-go/action.yml
         with:
-          go-version: '1.18'
-          cache: true
-          cache-dependency-path: frontend/go.sum
+          working-directory: frontend
       - name: setup go-task
         uses: arduino/setup-task@v1
       - name: build

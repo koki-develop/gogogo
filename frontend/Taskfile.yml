@@ -12,6 +12,10 @@ tasks:
   deploy:
     deps: [build]
     cmds:
+      - task: deploy-only
+
+  deploy-only:
+    cmds:
       - aws s3 cp ./dist/index.html   s3://gogogo-frontend-files/index.html
       - aws s3 cp ./dist/wasm_exec.js s3://gogogo-frontend-files/wasm_exec.js
 

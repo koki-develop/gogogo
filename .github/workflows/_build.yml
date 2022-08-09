@@ -17,12 +17,11 @@ jobs:
         uses: ./.github/actions/setup-go/action.yml
         with:
           working-directory: backend
+      - name: setup go-task
+        uses: arduino/setup-task@v1
       # build
       - name: build
-        env:
-          GOARCH: amd64
-          GOOS: linux
-        run: go build -ldflags="-s -w" -o dist/api pkg/handlers/api/lambda/main.go
+        run: task build
       - name: upload backend artifact
         uses: actions/upload-artifact@v3
         with:

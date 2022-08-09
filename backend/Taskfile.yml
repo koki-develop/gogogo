@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o dist/api pkg/handlers/api/lambda/main.go

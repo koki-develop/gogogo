@@ -6,9 +6,13 @@ import (
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/route53"
 )
 
-func NewHostzoneMain(scope constructs.Construct) route53.DataAwsRoute53Zone {
+type HostzoneMainConfig struct {
+	Name string
+}
+
+func NewHostzoneMain(scope constructs.Construct, cfg *HostzoneMainConfig) route53.DataAwsRoute53Zone {
 	return route53.NewDataAwsRoute53Zone(scope, jsii.String("route53-zone-default"), &route53.DataAwsRoute53ZoneConfig{
-		Name:        jsii.String(Domain),
+		Name:        &cfg.Name,
 		PrivateZone: jsii.Bool(false),
 	})
 }

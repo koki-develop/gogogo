@@ -17,17 +17,15 @@ import (
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
-const (
-	Domain = "go55.dev"
-)
-
 func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
+	domain := "go55.dev"
+
 	stack := cdktf.NewTerraformStack(scope, &id)
 
 	NewAwsProvider(stack)
 	NewArchiveProvider(stack)
 
-	hostzone := NewHostzoneMain(stack)
+	hostzone := NewHostzoneMain(stack, &HostzoneMainConfig{Name: domain})
 
 	uiacm := acm.NewAcmCertificate(stack, jsii.String("acm-certificate-frontend"), &acm.AcmCertificateConfig{
 		DomainName:       jsii.String("go55.dev"),

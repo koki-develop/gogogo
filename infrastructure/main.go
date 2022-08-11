@@ -2,14 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path"
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/route53"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
@@ -17,7 +13,6 @@ import (
 
 func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	domain := "go55.dev"
-	catAPIKey := os.Getenv("CAT_API_KEY")
 
 	stack := cdktf.NewTerraformStack(scope, &id)
 
@@ -47,48 +42,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		}},
 	})
 
-	apilambdafunctioniamroleassumepolicy := NewAssumePolicy(stack, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
-
-	apilambdafunctioniamrole := iam.NewIamRole(stack, jsii.String("iam-role-api"), &iam.IamRoleConfig{
-		Name:             jsii.String("gogogo-api-role"),
-		AssumeRolePolicy: apilambdafunctioniamroleassumepolicy.Json(),
-	})
-
-	administratoraccesspolicy := iam.NewDataAwsIamPolicy(stack, jsii.String("iam-policy-adoministrator-access"), &iam.DataAwsIamPolicyConfig{
-		Arn: jsii.String("arn:aws:iam::aws:policy/AdministratorAccess"),
-	})
-	iam.NewIamRolePolicyAttachment(stack, jsii.String("iam-role-policy-attachment-api-administorator-access-to-lambda-function-iam-role"), &iam.IamRolePolicyAttachmentConfig{
-		Role:      apilambdafunctioniamrole.Name(),
-		PolicyArn: administratoraccesspolicy.Arn(),
-	})
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
-	apisourcearchive := archive.NewDataArchiveFile(stack, jsii.String("archive-file-api-source"), &archive.DataArchiveFileConfig{
-		Type:       jsii.String("zip"),
-		SourceFile: jsii.String(path.Join(cwd, "../backend/dist/api")),
-		OutputPath: jsii.String(path.Join(cwd, "dist/api.zip")),
-	})
-
-	apifunction := lambdafunction.NewLambdaFunction(stack, jsii.String("lambda-function-api"), &lambdafunction.LambdaFunctionConfig{
-		FunctionName: jsii.String("gogogo-api"),
-		Role:         apilambdafunctioniamrole.Arn(),
-		PackageType:  jsii.String("Zip"),
-
-		Filename:       apisourcearchive.OutputPath(),
-		Handler:        jsii.String("api"),
-		SourceCodeHash: apisourcearchive.OutputBase64Sha256(),
-		Runtime:        jsii.String("go1.x"),
-
-		Environment: &lambdafunction.LambdaFunctionEnvironment{
-			Variables: &map[string]*string{
-				"CAT_API_KEY": &catAPIKey,
-			},
-		},
-	})
+	apifunction := NewAPILambda(stack)
 
 	apigatewayapi := apigateway.NewApiGatewayRestApi(stack, jsii.String("api-gateway-api"), &apigateway.ApiGatewayRestApiConfig{
 		Name: jsii.String("gogogo-api"),

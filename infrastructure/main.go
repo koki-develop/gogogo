@@ -8,7 +8,6 @@ import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-archive-go/archive"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/acm"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
@@ -27,26 +26,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	hostzone := NewHostzoneMain(stack, &HostzoneMainConfig{Name: domain})
 
-	uiacm := acm.NewAcmCertificate(stack, jsii.String("acm-certificate-frontend"), &acm.AcmCertificateConfig{
-		DomainName:       jsii.String("go55.dev"),
-		ValidationMethod: jsii.String("DNS"),
-		Lifecycle: &cdktf.TerraformResourceLifecycle{
-			CreateBeforeDestroy: jsii.Bool(true),
-		},
-	})
-
-	uiacmvalicationrecord := route53.NewRoute53Record(stack, jsii.String("route53-record-api-certificate-validation"), &route53.Route53RecordConfig{
-		ZoneId:  hostzone.ZoneId(),
-		Name:    uiacm.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordName(),
-		Type:    uiacm.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordType(),
-		Records: &[]*string{uiacm.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordValue()},
-		Ttl:     jsii.Number(60),
-	})
-
-	acm.NewAcmCertificateValidation(stack, jsii.String("acm-certificate-validation-frontend"), &acm.AcmCertificateValidationConfig{
-		CertificateArn:        uiacm.Arn(),
-		ValidationRecordFqdns: &[]*string{uiacmvalicationrecord.Fqdn()},
-	})
+	certfrontend := NewCertificateFrontend(stack, &CertificateFrontendConfig{Hostzone: hostzone})
 
 	catsAPIKey := os.Getenv("CAT_API_KEY")
 
@@ -55,7 +35,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	NewS3Cats(stack)
 
-	uicloudfront := NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity, uiacm)
+	uicloudfront := NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity, certfrontend)
 
 	route53.NewRoute53Record(stack, jsii.String("route53-record-frontend"), &route53.Route53RecordConfig{
 		ZoneId: hostzone.Id(),

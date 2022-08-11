@@ -72,15 +72,27 @@ func (c *CatImages) Render() vecty.ComponentOrHTML {
 					c.ShowingCat = nil
 					vecty.Rerender(c)
 				}),
-				vecty.Class("absolute"),
-				vecty.Class("bg-black"),
-				vecty.Class("opacity-50"),
+				vecty.Style("background-color", "rgba(0, 0, 0, 0.5)"),
+				vecty.Class("fixed"),
+				vecty.Class("flex"),
+				vecty.Class("items-center"),
+				vecty.Class("justify-center"),
 				vecty.Class("w-full"),
 				vecty.Class("h-full"),
-				vecty.Class("min-h-screen"),
 				vecty.Class("left-0"),
 				vecty.Class("top-0"),
 				vecty.Class("z-50"),
+			),
+
+			elem.Image(
+				vecty.Markup(
+					vecty.Attribute("src", c.ShowingCat.URL),
+					vecty.Class("object-contain"),
+					vecty.Style("min-width", "60%"),
+					vecty.Style("min-height", "60%"),
+					vecty.Style("max-width", "80%"),
+					vecty.Style("max-height", "80%"),
+				),
 			),
 		))
 	}

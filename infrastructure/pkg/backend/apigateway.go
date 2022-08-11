@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
-type apiGatewayAPIConfig struct {
+type apiGatewayAPIInput struct {
 	LambdaFunction lambdafunction.LambdaFunction
 }
 
-func newAPIGatewayAPI(scope constructs.Construct, ipt *apiGatewayAPIConfig) apigateway.ApiGatewayRestApi {
+func newAPIGatewayAPI(scope constructs.Construct, ipt *apiGatewayAPIInput) apigateway.ApiGatewayRestApi {
 	api := apigateway.NewApiGatewayRestApi(scope, jsii.String("api-gateway-api"), &apigateway.ApiGatewayRestApiConfig{
 		Name: jsii.String("gogogo-api"),
 		EndpointConfiguration: &apigateway.ApiGatewayRestApiEndpointConfiguration{

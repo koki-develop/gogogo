@@ -49,6 +49,7 @@ func NewS3Frontend(scope constructs.Construct, identity cloudfront.CloudfrontOri
 	return bucket
 }
 
+// cats.json 保存用の S3 バケット
 func NewS3Cats(scope constructs.Construct) s3.S3Bucket {
 	bucket := NewS3Bucket(scope, "s3-bucket-cats", "gogogo-cats")
 

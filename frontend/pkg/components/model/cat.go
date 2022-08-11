@@ -21,7 +21,7 @@ func NewCatImage(cat *entities.Cat, onClick func(cat *entities.Cat)) *CatImage {
 
 func (c *CatImage) Render() vecty.ComponentOrHTML {
 	img := util.WithClasses(util.NewImage(c.Cat.URL, "Cat"),
-		"absolute", "w-full", "h-full", "top-0", "left-0", "object-cover",
+		"absolute", "w-full", "h-full", "top-0", "left-0", "object-cover", "rounded-full", "cursor-pointer",
 	)
 
 	card := elem.Div(vecty.Markup(vecty.Style("padding-top", "100%")), img)

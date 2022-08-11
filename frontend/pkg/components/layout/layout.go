@@ -13,6 +13,9 @@ func New(children ...vecty.MarkupOrChild) vecty.MarkupOrChild {
 
 	f := newFooter()
 
-	root := util.WithClasses(elem.Div(h, m, f), "p-4")
+	root := elem.Div(vecty.Markup(
+		vecty.Class("p-4"),
+		vecty.Class("relative"),
+	), h, m, f)
 	return root
 }

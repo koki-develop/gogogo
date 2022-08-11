@@ -1,4 +1,4 @@
-package catsapi
+package catapi
 
 import (
 	"encoding/json"

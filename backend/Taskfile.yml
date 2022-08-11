@@ -2,5 +2,9 @@ version: '3'
 
 tasks:
   build:
+    env:
+      GOARCH: amd64
+      GOOS: linux
     cmds:
-      - GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o dist/api pkg/handlers/api/lambda/main.go
+      - go build -ldflags="-s -w" -o dist/api        ./pkg/handlers/api/lambda
+      - go build -ldflags="-s -w" -o dist/updatecats ./pkg/handlers/updatecats

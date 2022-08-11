@@ -18,6 +18,7 @@ import (
 
 func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	domain := "go55.dev"
+	catAPIKey := os.Getenv("CAT_API_KEY")
 
 	stack := cdktf.NewTerraformStack(scope, &id)
 
@@ -27,8 +28,6 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	hostzone := NewHostzoneMain(stack, &HostzoneMainConfig{Name: domain})
 
 	certfrontend := NewCertificateFrontend(stack, &CertificateFrontendConfig{Hostzone: hostzone})
-
-	catsAPIKey := os.Getenv("CAT_API_KEY")
 
 	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
@@ -86,7 +85,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 		Environment: &lambdafunction.LambdaFunctionEnvironment{
 			Variables: &map[string]*string{
-				"CAT_API_KEY": &catsAPIKey,
+				"CAT_API_KEY": &catAPIKey,
 			},
 		},
 	})

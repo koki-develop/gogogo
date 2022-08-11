@@ -7,7 +7,6 @@ import (
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/route53"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
@@ -31,16 +30,10 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		OriginAccessIdentity: cfoai,
 		Certificate:          certfrontend,
 	})
-
-	route53.NewRoute53Record(stack, jsii.String("route53-record-frontend"), &route53.Route53RecordConfig{
-		ZoneId: hostzone.Id(),
-		Name:   jsii.String("go55.dev"),
-		Type:   jsii.String("A"),
-		Alias: []*route53.Route53RecordAlias{{
-			Name:                 cffrontend.DomainName(),
-			ZoneId:               cffrontend.HostedZoneId(),
-			EvaluateTargetHealth: jsii.Bool(false),
-		}},
+	NewRecordFrontend(stack, &RecordFrontendConfig{
+		Domain:       domain,
+		Hostzone:     hostzone,
+		Distribution: cffrontend,
 	})
 
 	NewS3Cats(stack)

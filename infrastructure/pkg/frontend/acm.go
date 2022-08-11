@@ -1,4 +1,4 @@
-package main
+package frontend
 
 import (
 	"github.com/aws/constructs-go/constructs/v10"
@@ -8,21 +8,22 @@ import (
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
-type CertificateFrontendConfig struct {
+type certificateMainInput struct {
+	Domain   string
 	Hostzone route53.DataAwsRoute53Zone
 }
 
-func NewCertificateFrontend(scope constructs.Construct, cfg *CertificateFrontendConfig) acm.AcmCertificate {
+func newCertificateMain(scope constructs.Construct, ipt *certificateMainInput) acm.AcmCertificate {
 	cert := acm.NewAcmCertificate(scope, jsii.String("acm-certificate-frontend"), &acm.AcmCertificateConfig{
-		DomainName:       jsii.String("go55.dev"),
+		DomainName:       &ipt.Domain,
 		ValidationMethod: jsii.String("DNS"),
 		Lifecycle: &cdktf.TerraformResourceLifecycle{
 			CreateBeforeDestroy: jsii.Bool(true),
 		},
 	})
 
-	validrec := route53.NewRoute53Record(scope, jsii.String("route53-record-api-certificate-validation"), &route53.Route53RecordConfig{
-		ZoneId:  cfg.Hostzone.ZoneId(),
+	validrec := route53.NewRoute53Record(scope, jsii.String("route53-record-frontend-certificate-validation"), &route53.Route53RecordConfig{
+		ZoneId:  ipt.Hostzone.ZoneId(),
 		Name:    cert.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordName(),
 		Type:    cert.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordType(),
 		Records: &[]*string{cert.DomainValidationOptions().Get(jsii.Number(0)).ResourceRecordValue()},

@@ -4,6 +4,7 @@ import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/koki-develop/gogogo/infrastructure/pkg/frontend"
 )
 
 func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
@@ -16,20 +17,9 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	hostzone := NewHostzoneMain(stack, &HostzoneMainConfig{Name: domain})
 
-	// フロントエンド
-	certfrontend := NewCertificateFrontend(stack, &CertificateFrontendConfig{Hostzone: hostzone})
-	cfoai := NewCloudfrontOriginAccessIdentity(stack, "cloudfront-origin-access-identity-frontend")
-	s3frontend := NewS3Frontend(stack, &S3FrontendConfig{OriginAccessIdentity: cfoai})
-	cffrontend := NewCloudfrontFrontend(stack, &CloudfrontFrontendConfig{
-		Domain:               domain,
-		Bucket:               s3frontend,
-		OriginAccessIdentity: cfoai,
-		Certificate:          certfrontend,
-	})
-	NewRecordFrontend(stack, &RecordFrontendConfig{
-		Domain:       domain,
-		Hostzone:     hostzone,
-		Distribution: cffrontend,
+	frontend.Apply(stack, &frontend.Input{
+		Domain:   domain,
+		Hostzone: hostzone,
 	})
 
 	// バックエンド

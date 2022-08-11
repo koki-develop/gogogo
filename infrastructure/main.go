@@ -4,6 +4,7 @@ import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/koki-develop/gogogo/infrastructure/pkg/backend"
 	"github.com/koki-develop/gogogo/infrastructure/pkg/frontend"
 )
 
@@ -22,10 +23,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Hostzone: hostzone,
 	})
 
-	// バックエンド
-	NewS3Cats(stack)
-	apifunc := NewAPILambda(stack)
-	NewAPIGatewayForAPI(stack, &APIGatewayForAPIConfig{LambdaFunction: apifunc})
+	backend.Apply(stack)
 
 	return stack
 }

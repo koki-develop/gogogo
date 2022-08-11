@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"github.com/aws/constructs-go/constructs/v10"
@@ -6,11 +6,8 @@ import (
 	"github.com/koki-develop/gogogo/infrastructure/pkg/util"
 )
 
-// cats.json 保存用の S3 バケット
-func NewS3Cats(scope constructs.Construct) s3.S3Bucket {
+func newS3Cats(scope constructs.Construct) s3.S3Bucket {
 	bucket := util.NewS3Bucket(scope, "s3-bucket-cats", "gogogo-cats")
-
 	util.NewS3PublicAccessBlock(scope, "s3-public-access-block-cats", bucket.Bucket())
-
 	return bucket
 }

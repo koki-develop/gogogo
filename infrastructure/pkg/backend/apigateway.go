@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"fmt"
@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
-type APIGatewayForAPIConfig struct {
+type apiGatewayAPIConfig struct {
 	LambdaFunction lambdafunction.LambdaFunction
 }
 
-func NewAPIGatewayForAPI(scope constructs.Construct, cfg *APIGatewayForAPIConfig) apigateway.ApiGatewayRestApi {
+func newAPIGatewayAPI(scope constructs.Construct, ipt *apiGatewayAPIConfig) apigateway.ApiGatewayRestApi {
 	api := apigateway.NewApiGatewayRestApi(scope, jsii.String("api-gateway-api"), &apigateway.ApiGatewayRestApiConfig{
 		Name: jsii.String("gogogo-api"),
 		EndpointConfiguration: &apigateway.ApiGatewayRestApiEndpointConfiguration{
@@ -41,7 +41,7 @@ func NewAPIGatewayForAPI(scope constructs.Construct, cfg *APIGatewayForAPIConfig
 		HttpMethod:            mth.HttpMethod(),
 		IntegrationHttpMethod: jsii.String("POST"),
 		Type:                  jsii.String("AWS_PROXY"),
-		Uri:                   cfg.LambdaFunction.InvokeArn(),
+		Uri:                   ipt.LambdaFunction.InvokeArn(),
 	})
 
 	dep := apigateway.NewApiGatewayDeployment(scope, jsii.String("api-gateway-deployment"), &apigateway.ApiGatewayDeploymentConfig{
@@ -59,7 +59,7 @@ func NewAPIGatewayForAPI(scope constructs.Construct, cfg *APIGatewayForAPIConfig
 
 	lambdafunction.NewLambdaPermission(scope, jsii.String("lambda-function-permission-api"), &lambdafunction.LambdaPermissionConfig{
 		Action:       jsii.String("lambda:InvokeFunction"),
-		FunctionName: cfg.LambdaFunction.FunctionName(),
+		FunctionName: ipt.LambdaFunction.FunctionName(),
 		Principal:    jsii.String("apigateway.amazonaws.com"),
 		SourceArn:    jsii.String(fmt.Sprintf("%s/*/*", *api.ExecutionArn())),
 	})

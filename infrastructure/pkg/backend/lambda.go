@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"os"
@@ -9,10 +9,11 @@ import (
 	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
+	"github.com/koki-develop/gogogo/infrastructure/pkg/util"
 )
 
-func NewAPILambda(scope constructs.Construct) lambdafunction.LambdaFunction {
-	assumepolicy := NewAssumePolicy(scope, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
+func newLambdaAPI(scope constructs.Construct) lambdafunction.LambdaFunction {
+	assumepolicy := util.NewAssumePolicy(scope, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
 	iamrole := iam.NewIamRole(scope, jsii.String("iam-role-api"), &iam.IamRoleConfig{
 		Name:             jsii.String("gogogo-api-role"),
 		AssumeRolePolicy: assumepolicy.Json(),

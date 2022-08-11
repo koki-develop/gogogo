@@ -28,12 +28,13 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	certfrontend := NewCertificateFrontend(stack, &CertificateFrontendConfig{Hostzone: hostzone})
 
-	cloudfrontoriginaccessidentity := NewCloudfrontOriginAccessIdentity(stack, "cloudfront-origin-access-identity-frontend")
-	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
+	cfoai := NewCloudfrontOriginAccessIdentity(stack, "cloudfront-origin-access-identity-frontend")
+
+	s3frontend := NewS3Frontend(stack, &S3FrontendConfig{OriginAccessIdentity: cfoai})
 
 	NewS3Cats(stack)
 
-	uicloudfront := NewCloudfrontFrontend(stack, s3bucketfrontend, cloudfrontoriginaccessidentity, certfrontend)
+	uicloudfront := NewCloudfrontFrontend(stack, s3frontend, cfoai, certfrontend)
 
 	route53.NewRoute53Record(stack, jsii.String("route53-record-frontend"), &route53.Route53RecordConfig{
 		ZoneId: hostzone.Id(),

@@ -24,8 +24,12 @@ func NewS3PublicAccessBlock(scope constructs.Construct, id string, bucket *strin
 	})
 }
 
+type S3FrontendConfig struct {
+	OriginAccessIdentity cloudfront.CloudfrontOriginAccessIdentity
+}
+
 // フロントエンドの静的ファイル配置用の S3 バケット
-func NewS3Frontend(scope constructs.Construct, identity cloudfront.CloudfrontOriginAccessIdentity) s3.S3Bucket {
+func NewS3Frontend(scope constructs.Construct, cfg *S3FrontendConfig) s3.S3Bucket {
 	bucket := NewS3Bucket(scope, "s3-bucket-frontend", "gogogo-frontend-files")
 
 	NewS3PublicAccessBlock(scope, "s3-public-access-block-frontend", bucket.Bucket())
@@ -37,7 +41,7 @@ func NewS3Frontend(scope constructs.Construct, identity cloudfront.CloudfrontOri
 			Resources: jsii.Strings(fmt.Sprintf("%s/*", *bucket.Arn())),
 			Principals: []*iam.DataAwsIamPolicyDocumentStatementPrincipals{{
 				Type:        jsii.String("AWS"),
-				Identifiers: &[]*string{identity.IamArn()},
+				Identifiers: &[]*string{cfg.OriginAccessIdentity.IamArn()},
 			}},
 		}},
 	})

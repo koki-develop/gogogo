@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"fmt"
 	"os"
 	"path"
 
@@ -9,22 +10,31 @@ import (
 	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
+	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/s3"
 	"github.com/koki-develop/gogogo/infrastructure/pkg/util"
 )
 
-func newLambdaAPI(scope constructs.Construct) lambdafunction.LambdaFunction {
+type lambdaAPIInput struct {
+	CatsBucket s3.S3Bucket
+}
+
+func newLambdaAPI(scope constructs.Construct, ipt *lambdaAPIInput) lambdafunction.LambdaFunction {
 	assumepolicy := util.NewAssumePolicy(scope, "data-iam-policy-document-api-assume-policy", "lambda.amazonaws.com")
+
+	policy := iam.NewDataAwsIamPolicyDocument(scope, jsii.String("data-iam-policy-document-api-policy"), &iam.DataAwsIamPolicyDocumentConfig{
+		Statement: []*iam.DataAwsIamPolicyDocumentStatement{{
+			Effect:    jsii.String("Allow"),
+			Actions:   jsii.Strings("s3:GetObject"),
+			Resources: jsii.Strings(fmt.Sprintf("%s/*", *ipt.CatsBucket.Arn())),
+		}},
+	})
 	iamrole := iam.NewIamRole(scope, jsii.String("iam-role-api"), &iam.IamRoleConfig{
 		Name:             jsii.String("gogogo-api-role"),
 		AssumeRolePolicy: assumepolicy.Json(),
-	})
-	// TODO: ちゃんと絞り込む
-	adminpolicy := iam.NewDataAwsIamPolicy(scope, jsii.String("iam-policy-adoministrator-access"), &iam.DataAwsIamPolicyConfig{
-		Arn: jsii.String("arn:aws:iam::aws:policy/AdministratorAccess"),
-	})
-	iam.NewIamRolePolicyAttachment(scope, jsii.String("iam-role-policy-attachment-api-administorator-access-to-lambda-function-iam-role"), &iam.IamRolePolicyAttachmentConfig{
-		Role:      iamrole.Name(),
-		PolicyArn: adminpolicy.Arn(),
+		InlinePolicy: []*iam.IamRoleInlinePolicy{{
+			Name:   jsii.String("allow-access-to-cats-bucket"),
+			Policy: policy.Json(),
+		}},
 	})
 
 	cwd, err := os.Getwd()
@@ -32,7 +42,7 @@ func newLambdaAPI(scope constructs.Construct) lambdafunction.LambdaFunction {
 		panic(err)
 	}
 	// NOTE: backend 側で go build 実行済みであることを前提としている
-	apisourcearchive := archive.NewDataArchiveFile(scope, jsii.String("archive-file-api-source"), &archive.DataArchiveFileConfig{
+	src := archive.NewDataArchiveFile(scope, jsii.String("archive-file-api-source"), &archive.DataArchiveFileConfig{
 		Type:       jsii.String("zip"),
 		SourceFile: jsii.String(path.Join(cwd, "../backend/dist/api")),
 		OutputPath: jsii.String(path.Join(cwd, "dist/api.zip")),
@@ -43,9 +53,9 @@ func newLambdaAPI(scope constructs.Construct) lambdafunction.LambdaFunction {
 		Role:         iamrole.Arn(),
 		PackageType:  jsii.String("Zip"),
 
-		Filename:       apisourcearchive.OutputPath(),
+		Filename:       src.OutputPath(),
 		Handler:        jsii.String("api"),
-		SourceCodeHash: apisourcearchive.OutputBase64Sha256(),
+		SourceCodeHash: src.OutputBase64Sha256(),
 		Runtime:        jsii.String("go1.x"),
 	})
 }

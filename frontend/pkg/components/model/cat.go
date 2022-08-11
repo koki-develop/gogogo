@@ -1,15 +1,15 @@
-package components
+package model
 
 import (
 	"github.com/hexops/vecty"
 	"github.com/hexops/vecty/elem"
 	"github.com/koki-develop/gogogo/backend/pkg/entities"
+	"github.com/koki-develop/gogogo/frontend/pkg/components/util"
 )
 
 func NewCatImage(cat *entities.Cat) vecty.MarkupOrChild {
-	img := elem.Image()
+	img := util.NewImage(cat.URL, "Cat")
 	vecty.Markup(
-		vecty.Attribute("src", cat.URL),
 		vecty.Class("absolute"),
 		vecty.Class("w-full"),
 		vecty.Class("h-full"),

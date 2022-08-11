@@ -11,7 +11,5 @@ type CatsView struct {
 
 func main() {
 	v := views.NewCatsView()
-
-	vecty.SetTitle("GoGoGo")
 	vecty.RenderBody(v)
 }

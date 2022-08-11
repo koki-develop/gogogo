@@ -10,11 +10,10 @@ func newFooter() *vecty.HTML {
 	copy := elem.Paragraph()
 	vecty.Markup(vecty.UnsafeHTML("&copy;2022 Koki Sato")).Apply(copy)
 
-	f := elem.Footer(
+	f := util.WithClasses(elem.Footer(
 		copy,
 		util.NewAnchor("View on GitHub", "https://github.com/koki-develop/gogogo", true),
-	)
-	vecty.Markup(vecty.Class("text-center")).Apply(f)
+	), "text-center")
 
 	return f
 }

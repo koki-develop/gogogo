@@ -3,17 +3,16 @@ package layout
 import (
 	"github.com/hexops/vecty"
 	"github.com/hexops/vecty/elem"
+	"github.com/koki-develop/gogogo/frontend/pkg/components/util"
 )
 
 func New(children ...vecty.MarkupOrChild) vecty.MarkupOrChild {
 	h := newHeader()
 
-	m := elem.Main(children...)
-	vecty.Markup(vecty.Class("my-4"), vecty.Class("container"), vecty.Class("mx-auto")).Apply(m)
+	m := util.WithClasses(elem.Main(children...), "container", "my-4", "mx-auto")
 
 	f := newFooter()
 
-	root := elem.Div(h, m, f)
-	vecty.Markup(vecty.Class("p-4")).Apply(root)
+	root := util.WithClasses(elem.Div(h, m, f), "p-4")
 	return root
 }

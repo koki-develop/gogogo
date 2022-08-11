@@ -7,15 +7,12 @@ import (
 )
 
 func newHeader() *vecty.HTML {
-	ttl := elem.Heading1(vecty.Text("GoGoGo"))
-	vecty.Markup(vecty.Class("text-3xl")).Apply(ttl)
+	ttl := util.WithClasses(elem.Heading1(vecty.Text("GoGoGo")), "text-3xl")
 
-	catapilink := util.NewAnchor("The Cat API", "https://thecatapi.com/", true)
-	vecty.Markup(vecty.Class("text-blue-500")).Apply(catapilink)
+	catapilink := util.WithClasses(util.NewAnchor("The Cat API", "https://thecatapi.com/", true), "text-blue-500")
 	subttl := elem.Paragraph(vecty.Text("powered by "), catapilink)
 
-	h := elem.Header(ttl, subttl)
-	vecty.Markup(vecty.Class("text-center")).Apply(h)
+	h := util.WithClasses(elem.Header(ttl, subttl), "text-center")
 
 	return h
 }

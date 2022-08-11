@@ -8,30 +8,18 @@ import (
 )
 
 func NewCatImage(cat *entities.Cat) vecty.MarkupOrChild {
-	img := util.NewImage(cat.URL, "Cat")
-	vecty.Markup(
-		vecty.Class("absolute"),
-		vecty.Class("w-full"),
-		vecty.Class("h-full"),
-		vecty.Class("top-0"),
-		vecty.Class("left-0"),
-		vecty.Class("object-cover"),
-	).Apply(img)
+	img := util.WithClasses(util.NewImage(cat.URL, "Cat"),
+		"absolute", "w-full", "h-full", "top-0", "left-0", "object-cover",
+	)
 
 	card := elem.Div(img)
 	vecty.Markup(
 		vecty.Style("padding-top", "100%"),
 	).Apply(card)
 
-	cardcontainer := elem.Div(card)
-	vecty.Markup(
-		vecty.Class("relative"),
-		vecty.Class("w-full"),
-		vecty.Class("rounded-full"),
-		vecty.Class("overflow-hidden"),
-		vecty.Class("shadow-lg"),
-		vecty.Class("border"),
-	).Apply(cardcontainer)
+	cardcontainer := util.WithClasses(elem.Div(card),
+		"relative", "w-full", "rounded-full", "overflow-hidden", "shadow-lg", "border",
+	)
 
 	return cardcontainer
 }
@@ -40,23 +28,16 @@ func NewCatImages(cats entities.Cats) vecty.MarkupOrChild {
 	var items []vecty.MarkupOrChild
 	for _, cat := range cats {
 		img := NewCatImage(cat)
-		item := elem.ListItem(img)
-		vecty.Markup(
-			vecty.Class("flex"),
-			vecty.Class("justify-center"),
-			vecty.Class("m-2"),
-		).Apply(item)
+		item := util.WithClasses(elem.ListItem(img),
+			"flex", "justify-center", "m-2",
+		)
 
 		items = append(items, item)
 	}
 
-	list := elem.UnorderedList(items...)
-	vecty.Markup(
-		vecty.Class("grid"),
-		vecty.Class("grid-cols-2"),
-		vecty.Class("sm:grid-cols-3"),
-		vecty.Class("md:grid-cols-4"),
-	).Apply(list)
+	list := util.WithClasses(elem.UnorderedList(items...),
+		"grid", "grid-cols-2", "sm:grid-cols-3", "md:grid-cols-4",
+	)
 
 	return list
 }

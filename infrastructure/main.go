@@ -9,7 +9,6 @@ import (
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/cdktf-provider-archive-go/archive"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/apigateway"
-	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/cloudfront"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/iam"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/lambdafunction"
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/route53"
@@ -29,7 +28,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	certfrontend := NewCertificateFrontend(stack, &CertificateFrontendConfig{Hostzone: hostzone})
 
-	cloudfrontoriginaccessidentity := cloudfront.NewCloudfrontOriginAccessIdentity(stack, jsii.String("cloudfront-origin-access-identity-frontend"), &cloudfront.CloudfrontOriginAccessIdentityConfig{})
+	cloudfrontoriginaccessidentity := NewCloudfrontOriginAccessIdentity(stack, "cloudfront-origin-access-identity-frontend")
 	s3bucketfrontend := NewS3Frontend(stack, cloudfrontoriginaccessidentity)
 
 	NewS3Cats(stack)

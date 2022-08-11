@@ -8,6 +8,10 @@ import (
 	"github.com/hashicorp/cdktf-provider-aws-go/aws/v9/s3"
 )
 
+func NewCloudfrontOriginAccessIdentity(scope constructs.Construct, id string) cloudfront.CloudfrontOriginAccessIdentity {
+	return cloudfront.NewCloudfrontOriginAccessIdentity(scope, &id, &cloudfront.CloudfrontOriginAccessIdentityConfig{})
+}
+
 func NewCloudfrontFrontend(scope constructs.Construct, bucket s3.S3Bucket, identity cloudfront.CloudfrontOriginAccessIdentity, cert acm.AcmCertificate) cloudfront.CloudfrontDistribution {
 	return cloudfront.NewCloudfrontDistribution(scope, jsii.String("cloudfront-distribution-frontend"), &cloudfront.CloudfrontDistributionConfig{
 		Aliases:           jsii.Strings("go55.dev"),

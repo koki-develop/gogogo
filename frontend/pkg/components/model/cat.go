@@ -24,10 +24,7 @@ func (c *CatImage) Render() vecty.ComponentOrHTML {
 		"absolute", "w-full", "h-full", "top-0", "left-0", "object-cover",
 	)
 
-	card := elem.Div(img)
-	vecty.Markup(
-		vecty.Style("padding-top", "100%"),
-	).Apply(card)
+	card := elem.Div(vecty.Markup(vecty.Style("padding-top", "100%")), img)
 
 	cardcontainer := util.WithClasses(elem.Div(vecty.Markup(event.Click(func(e *vecty.Event) { c.OnClick(c.Cat) })), card),
 		"relative", "w-full", "rounded-full", "overflow-hidden", "shadow-lg", "border",
@@ -83,6 +80,7 @@ func (c *CatImages) Render() vecty.ComponentOrHTML {
 				vecty.Class("min-h-screen"),
 				vecty.Class("left-0"),
 				vecty.Class("top-0"),
+				vecty.Class("z-50"),
 			),
 		))
 	}

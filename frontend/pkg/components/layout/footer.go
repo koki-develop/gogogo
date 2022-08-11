@@ -7,8 +7,11 @@ import (
 )
 
 func newFooter() *vecty.HTML {
-	copy := elem.Paragraph()
-	vecty.Markup(vecty.UnsafeHTML("&copy;2022 Koki Sato")).Apply(copy)
+	copy := elem.Paragraph(
+		vecty.Markup(
+			vecty.UnsafeHTML("&copy;2022 Koki Sato"),
+		),
+	)
 
 	f := util.WithClasses(elem.Footer(
 		copy,

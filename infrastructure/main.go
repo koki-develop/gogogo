@@ -21,26 +21,29 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 	hostzone := NewHostzoneMain(stack, &HostzoneMainConfig{Name: domain})
 
+	// フロントエンド
 	certfrontend := NewCertificateFrontend(stack, &CertificateFrontendConfig{Hostzone: hostzone})
-
 	cfoai := NewCloudfrontOriginAccessIdentity(stack, "cloudfront-origin-access-identity-frontend")
-
 	s3frontend := NewS3Frontend(stack, &S3FrontendConfig{OriginAccessIdentity: cfoai})
-
-	NewS3Cats(stack)
-
-	uicloudfront := NewCloudfrontFrontend(stack, s3frontend, cfoai, certfrontend)
+	cffrontend := NewCloudfrontFrontend(stack, &CloudfrontFrontendConfig{
+		Domain:               domain,
+		Bucket:               s3frontend,
+		OriginAccessIdentity: cfoai,
+		Certificate:          certfrontend,
+	})
 
 	route53.NewRoute53Record(stack, jsii.String("route53-record-frontend"), &route53.Route53RecordConfig{
 		ZoneId: hostzone.Id(),
 		Name:   jsii.String("go55.dev"),
 		Type:   jsii.String("A"),
 		Alias: []*route53.Route53RecordAlias{{
-			Name:                 uicloudfront.DomainName(),
-			ZoneId:               uicloudfront.HostedZoneId(),
+			Name:                 cffrontend.DomainName(),
+			ZoneId:               cffrontend.HostedZoneId(),
 			EvaluateTargetHealth: jsii.Bool(false),
 		}},
 	})
+
+	NewS3Cats(stack)
 
 	apifunction := NewAPILambda(stack)
 

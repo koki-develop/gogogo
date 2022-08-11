@@ -12,20 +12,27 @@ func NewCloudfrontOriginAccessIdentity(scope constructs.Construct, id string) cl
 	return cloudfront.NewCloudfrontOriginAccessIdentity(scope, &id, &cloudfront.CloudfrontOriginAccessIdentityConfig{})
 }
 
-func NewCloudfrontFrontend(scope constructs.Construct, bucket s3.S3Bucket, identity cloudfront.CloudfrontOriginAccessIdentity, cert acm.AcmCertificate) cloudfront.CloudfrontDistribution {
+type CloudfrontFrontendConfig struct {
+	Domain               string
+	Bucket               s3.S3Bucket
+	OriginAccessIdentity cloudfront.CloudfrontOriginAccessIdentity
+	Certificate          acm.AcmCertificate
+}
+
+func NewCloudfrontFrontend(scope constructs.Construct, cfg *CloudfrontFrontendConfig) cloudfront.CloudfrontDistribution {
 	return cloudfront.NewCloudfrontDistribution(scope, jsii.String("cloudfront-distribution-frontend"), &cloudfront.CloudfrontDistributionConfig{
-		Aliases:           jsii.Strings("go55.dev"),
+		Aliases:           jsii.Strings(cfg.Domain),
 		Enabled:           jsii.Bool(true),
 		DefaultRootObject: jsii.String("index.html"),
 		Origin: []*cloudfront.CloudfrontDistributionOrigin{{
-			OriginId:   bucket.Id(),
-			DomainName: bucket.BucketRegionalDomainName(),
+			OriginId:   cfg.Bucket.Id(),
+			DomainName: cfg.Bucket.BucketRegionalDomainName(),
 			S3OriginConfig: &cloudfront.CloudfrontDistributionOriginS3OriginConfig{
-				OriginAccessIdentity: identity.CloudfrontAccessIdentityPath(),
+				OriginAccessIdentity: cfg.OriginAccessIdentity.CloudfrontAccessIdentityPath(),
 			},
 		}},
 		DefaultCacheBehavior: &cloudfront.CloudfrontDistributionDefaultCacheBehavior{
-			TargetOriginId:       bucket.Id(),
+			TargetOriginId:       cfg.Bucket.Id(),
 			AllowedMethods:       jsii.Strings("GET", "HEAD"),
 			CachedMethods:        jsii.Strings("GET", "HEAD"),
 			ViewerProtocolPolicy: jsii.String("redirect-to-https"),
@@ -46,7 +53,7 @@ func NewCloudfrontFrontend(scope constructs.Construct, bucket s3.S3Bucket, ident
 			},
 		},
 		ViewerCertificate: &cloudfront.CloudfrontDistributionViewerCertificate{
-			AcmCertificateArn:            cert.Arn(),
+			AcmCertificateArn:            cfg.Certificate.Arn(),
 			CloudfrontDefaultCertificate: jsii.Bool(false),
 			MinimumProtocolVersion:       jsii.String("TLSv1.2_2021"),
 			SslSupportMethod:             jsii.String("sni-only"),

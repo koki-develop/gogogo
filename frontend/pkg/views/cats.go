@@ -6,6 +6,7 @@ import (
 
 	"github.com/hexops/vecty"
 	"github.com/hexops/vecty/elem"
+	"github.com/hexops/vecty/event"
 	"github.com/koki-develop/gogogo/backend/pkg/entities"
 	"github.com/koki-develop/gogogo/frontend/pkg/components/layout"
 	"github.com/koki-develop/gogogo/frontend/pkg/components/model"
@@ -15,14 +16,15 @@ import (
 type CatsView struct {
 	vecty.Core
 
-	Cats   entities.Cats
-	Loaded bool
-	Error  error
+	Cats      entities.Cats
+	Loaded    bool
+	Reloading bool
+	Error     error
 }
 
 func (v *CatsView) Render() vecty.ComponentOrHTML {
 	go func() {
-		if v.Loaded {
+		if v.Loaded && !v.Reloading {
 			return
 		}
 
@@ -30,6 +32,7 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 		if err != nil {
 			v.Error = err
 			v.Loaded = true
+			v.Reloading = false
 			vecty.Rerender(v)
 			return
 		}
@@ -38,6 +41,7 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 		if err != nil {
 			v.Error = err
 			v.Loaded = true
+			v.Reloading = false
 			vecty.Rerender(v)
 			return
 		}
@@ -47,12 +51,14 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 		if err := json.NewDecoder(resp.Body).Decode(&cats); err != nil {
 			v.Error = err
 			v.Loaded = true
+			v.Reloading = false
 			vecty.Rerender(v)
 			return
 		}
 
 		v.Cats = cats
 		v.Loaded = true
+		v.Reloading = false
 
 		vecty.Rerender(v)
 	}()
@@ -63,9 +69,36 @@ func (v *CatsView) Render() vecty.ComponentOrHTML {
 		return elem.Body(layout.New(msg))
 	}
 
+	// TODO: リファクタ
 	var body vecty.MarkupOrChild
-	if v.Loaded {
-		body = model.NewCatImages(v.Cats)
+	if v.Loaded && !v.Reloading {
+		body = elem.Div(
+			elem.Div(
+				vecty.Markup(
+					vecty.Class("flex"),
+					vecty.Class("justify-center"),
+					vecty.Class("mb-2"),
+				),
+				elem.Button(
+					vecty.Text("Reload"),
+					vecty.Markup(
+						event.Click(func(e *vecty.Event) {
+							v.Reloading = true
+							vecty.Rerender(v)
+						}),
+						vecty.Class("bg-blue-500"),
+						vecty.Class("hover:bg-blue-700"),
+						vecty.Class("text-white"),
+						vecty.Class("font-bold"),
+						vecty.Class("py-2"),
+						vecty.Class("px-4"),
+						vecty.Class("rounded"),
+						vecty.Class("transition"),
+					),
+				),
+			),
+			model.NewCatImages(v.Cats),
+		)
 	} else {
 		body = elem.Body(util.NewLoading())
 	}

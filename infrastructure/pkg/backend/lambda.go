@@ -37,6 +37,12 @@ func newLambdaAPI(scope constructs.Construct, ipt *lambdaAPIInput) lambdafunctio
 		}},
 	})
 
+	basicpolicy := util.NewDataIamPolicy(scope, "data-iam-policy-lambda-basic-execution-role", "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole")
+	iam.NewIamRolePolicyAttachment(scope, jsii.String("iam-role-policy-attachment-lambda-api-lambda-basic-execution-role"), &iam.IamRolePolicyAttachmentConfig{
+		Role:      iamrole.Name(),
+		PolicyArn: basicpolicy.Arn(),
+	})
+
 	cwd, err := os.Getwd()
 	if err != nil {
 		panic(err)

@@ -19,3 +19,9 @@ func NewAssumePolicy(scope constructs.Construct, id, service string) iam.DataAws
 	})
 
 }
+
+func NewDataIamPolicy(scope constructs.Construct, id, arn string) iam.DataAwsIamPolicy {
+	return iam.NewDataAwsIamPolicy(scope, &id, &iam.DataAwsIamPolicyConfig{
+		Arn: &arn,
+	})
+}

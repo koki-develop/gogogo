@@ -22,7 +22,11 @@ const tmpl = `
   </head>
 
   <body>
-    <p class="text-center mt-4">Loading...</p>
+    <div class="flex justify-center py-12">
+      <div class="animate-ping h-2 w-2 bg-blue-600 rounded-full"></div>
+      <div class="animate-ping h-2 w-2 bg-blue-600 rounded-full mx-4"></div>
+      <div class="animate-ping h-2 w-2 bg-blue-600 rounded-full"></div>
+    </div>
 
     <script src="wasm_exec.js"></script>
     <script>

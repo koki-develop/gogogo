@@ -34,6 +34,8 @@ github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.12 h1:qt60KgGalp3iMBHss65
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.12/go.mod h1:3xUD+xeP3rzrzthSVcVkVdKIlwmxc9FhuZJuj5Kpigo=
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.13 h1:2cx4FRL4RlXMbIRkCl8zfbERplFgxMPXqnT7wZr5MFo=
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.13/go.mod h1:jsPOTMQRaTX343d+npWkmIndRDfVgEgx3l55HD1wK5c=
+github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.14 h1:FbRjcSpz/Iyc1C6IuaGKgK17T6NxQ7ecbpgMURpGrqQ=
+github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.14/go.mod h1:jsPOTMQRaTX343d+npWkmIndRDfVgEgx3l55HD1wK5c=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.11.2/go.mod h1:a8+QPHntwVyJLVedf3wnodH7roqSphfVCsAzPFGtVpk=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0 h1:xNbMaZdhB5mKbrc7eSu6cIUcwJkhhDzmJPRhaNgAOCY=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0/go.mod h1:jaEAIWsKKD4EDjXCpaZAsFhHmxP4y7giBC5lX6YU69A=

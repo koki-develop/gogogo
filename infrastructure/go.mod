@@ -2,7 +2,7 @@ module github.com/koki-develop/gogogo/infrastructure
 
 go 1.19
 
-require github.com/aws/constructs-go/constructs/v10 v10.1.76
+require github.com/aws/constructs-go/constructs/v10 v10.1.77
 
 require (
 	github.com/aws/jsii-runtime-go v1.64.0

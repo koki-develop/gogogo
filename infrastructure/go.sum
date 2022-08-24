@@ -33,6 +33,8 @@ github.com/aws/constructs-go/constructs/v10 v10.1.81 h1:4YW8JlfzFHGYMmh9/FT+HEw8
 github.com/aws/constructs-go/constructs/v10 v10.1.81/go.mod h1:7+5GjvX5buJY6vZZmMxd50Ke1+NXzjva8N2eL+3txQQ=
 github.com/aws/constructs-go/constructs/v10 v10.1.83 h1:rNEp3Bn5joezmm/9K/4OnmJhSCkFyU/PWO5lIwPlPsM=
 github.com/aws/constructs-go/constructs/v10 v10.1.83/go.mod h1:7+5GjvX5buJY6vZZmMxd50Ke1+NXzjva8N2eL+3txQQ=
+github.com/aws/constructs-go/constructs/v10 v10.1.85 h1:2dkR80x3ptvKnYpQ7BkbfE6dwYAQ2o2g/79K8N8W8jA=
+github.com/aws/constructs-go/constructs/v10 v10.1.85/go.mod h1:7+5GjvX5buJY6vZZmMxd50Ke1+NXzjva8N2eL+3txQQ=
 github.com/aws/jsii-runtime-go v1.55.1/go.mod h1:9htokR2a9XpRcbNf3fwqPaTs0CpC3KJCOUDMMJvEgZQ=
 github.com/aws/jsii-runtime-go v1.62.0/go.mod h1:Dq2QkYFSpiHGabsCBMmLnnGkyx3lnf5k6C6fq8RN/90=
 github.com/aws/jsii-runtime-go v1.63.2 h1:brb+tRuZ3lDzFuz6DJCkv7fYLYkTKGVcSb4OgVybsa4=

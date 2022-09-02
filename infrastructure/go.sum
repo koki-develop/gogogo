@@ -49,6 +49,8 @@ github.com/aws/jsii-runtime-go v1.65.0 h1:A6o9DpZD0+IeFrXJ/qBPX7VJne5Vuk2KSfrG5E
 github.com/aws/jsii-runtime-go v1.65.0/go.mod h1:Dq2QkYFSpiHGabsCBMmLnnGkyx3lnf5k6C6fq8RN/90=
 github.com/aws/jsii-runtime-go v1.66.0 h1:I+bntuSjUAlgeM8l286g1NjtU43MoqX6zx1sCWG1Yb8=
 github.com/aws/jsii-runtime-go v1.66.0/go.mod h1:91SPsitQ+dDlxHNkXqVt1C6QmPmHC32QJm4xg6F5Q+4=
+github.com/aws/jsii-runtime-go v1.67.0 h1:kE3XxCLesjvdmSlnG0P/61+eTz2w1vnBTp/ZLkcAY48=
+github.com/aws/jsii-runtime-go v1.67.0/go.mod h1:91SPsitQ+dDlxHNkXqVt1C6QmPmHC32QJm4xg6F5Q+4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

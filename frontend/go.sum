@@ -10,6 +10,8 @@ github.com/tdewolff/minify/v2 v2.12.0 h1:ZyvMKeciyR3vzJrK/oHyBcSmpttQ/V+ah7qOqTZ
 github.com/tdewolff/minify/v2 v2.12.0/go.mod h1:8mvf+KglD7XurfvvFZDUYvVURy6bA/r0oTvmakXMnyg=
 github.com/tdewolff/minify/v2 v2.12.1 h1:zcjJTcO0uI+asdT+nd4TjXi3KUmVV/G2kxOKKrgKlGw=
 github.com/tdewolff/minify/v2 v2.12.1/go.mod h1:p5pwbvNs1ghbFED/ZW1towGsnnWwzvM8iz8l0eURi9g=
+github.com/tdewolff/minify/v2 v2.12.2 h1:AKIoVwJj/HgBm+d/fPqpEZ31EtCM5FJfJNGagdR9Ecg=
+github.com/tdewolff/minify/v2 v2.12.2/go.mod h1:p5pwbvNs1ghbFED/ZW1towGsnnWwzvM8iz8l0eURi9g=
 github.com/tdewolff/parse/v2 v2.6.1/go.mod h1:WzaJpRSbwq++EIQHYIRTpbYKNA3gn9it1Ik++q4zyho=
 github.com/tdewolff/parse/v2 v2.6.2 h1:RDExtQ7ThRGSucatK0nri3p+HD/tSreYh1IDtDDAS/I=
 github.com/tdewolff/parse/v2 v2.6.2/go.mod h1:woz0cgbLwFdtbjJu8PIKxhW05KplTFQkOdX78o+Jgrs=

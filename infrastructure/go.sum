@@ -47,6 +47,8 @@ github.com/aws/constructs-go/constructs/v10 v10.1.106 h1:o1+nJTk8sMAupHkc3rV5+oJ
 github.com/aws/constructs-go/constructs/v10 v10.1.106/go.mod h1:pyPg5NpVy3IEJ2y0n6ayY/garQOxKTJvIk7ETWi5X80=
 github.com/aws/constructs-go/constructs/v10 v10.1.109 h1:lmqqCClXIdOcwCblmsCU3+9BhZH77pDOTCRfyB87KiQ=
 github.com/aws/constructs-go/constructs/v10 v10.1.109/go.mod h1:pyPg5NpVy3IEJ2y0n6ayY/garQOxKTJvIk7ETWi5X80=
+github.com/aws/constructs-go/constructs/v10 v10.1.111 h1:5UvenlKBbAe+SUYU0z8+E2vKReG03V3qNr2YixB+BEQ=
+github.com/aws/constructs-go/constructs/v10 v10.1.111/go.mod h1:utyhwXdG4CxzHORjVi92o3h0x8H59sZZqSR3dsrzp8w=
 github.com/aws/jsii-runtime-go v1.55.1/go.mod h1:9htokR2a9XpRcbNf3fwqPaTs0CpC3KJCOUDMMJvEgZQ=
 github.com/aws/jsii-runtime-go v1.62.0/go.mod h1:Dq2QkYFSpiHGabsCBMmLnnGkyx3lnf5k6C6fq8RN/90=
 github.com/aws/jsii-runtime-go v1.63.2 h1:brb+tRuZ3lDzFuz6DJCkv7fYLYkTKGVcSb4OgVybsa4=
@@ -86,6 +88,8 @@ github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.34 h1:YOkpxiX9lcuvlm7er/N
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.34/go.mod h1:ha7nXjPiZazY3LhHmE81Us5HdXL6R986dkgRBwXtgoY=
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.37 h1:Ookv+prOs01POQirQbOOg6Vctdxb6lzpA9/MOtHKUfU=
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.37/go.mod h1:3chp5dE6O0gsc65iIFhaOYCprcKuPdOlqSGF4nHTdVg=
+github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.40 h1:ws1sEuwmipag0djacBOHQOqAJApiuk91mxhjNSIetKY=
+github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.40/go.mod h1:t9tRhANxSsJDXdRRXbjqb8jPfe2VLiB2hxCOYHCRxoY=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.11.2/go.mod h1:a8+QPHntwVyJLVedf3wnodH7roqSphfVCsAzPFGtVpk=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0 h1:xNbMaZdhB5mKbrc7eSu6cIUcwJkhhDzmJPRhaNgAOCY=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0/go.mod h1:jaEAIWsKKD4EDjXCpaZAsFhHmxP4y7giBC5lX6YU69A=

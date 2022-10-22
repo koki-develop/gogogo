@@ -49,6 +49,7 @@ github.com/aws/constructs-go/constructs/v10 v10.1.109 h1:lmqqCClXIdOcwCblmsCU3+9
 github.com/aws/constructs-go/constructs/v10 v10.1.109/go.mod h1:pyPg5NpVy3IEJ2y0n6ayY/garQOxKTJvIk7ETWi5X80=
 github.com/aws/constructs-go/constructs/v10 v10.1.111 h1:5UvenlKBbAe+SUYU0z8+E2vKReG03V3qNr2YixB+BEQ=
 github.com/aws/constructs-go/constructs/v10 v10.1.111/go.mod h1:utyhwXdG4CxzHORjVi92o3h0x8H59sZZqSR3dsrzp8w=
+github.com/aws/constructs-go/constructs/v10 v10.1.113/go.mod h1:utyhwXdG4CxzHORjVi92o3h0x8H59sZZqSR3dsrzp8w=
 github.com/aws/constructs-go/constructs/v10 v10.1.131 h1:+QZJLXZYccJK4Awi+3EVL4epbJehyTIQ1Ngy1CaqF2k=
 github.com/aws/constructs-go/constructs/v10 v10.1.131/go.mod h1:oTVXTVKdXCnJID4eAEUmO4tpyevdt6kyjopkBR2DDYI=
 github.com/aws/constructs-go/constructs/v10 v10.1.136 h1:4SNzzlpMcCP+XbnlnhhIlElHZK2sP10zMacp2N69xiE=
@@ -105,6 +106,8 @@ github.com/hashicorp/terraform-cdk-go/cdktf v0.12.1 h1:ZJTlGxrWszVp52NomHNzIQJK1
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.1/go.mod h1:wYwFPosz5g+kX4WeNALHBzQyMeToiu+pBPr5I9kyWm0=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.2 h1:OoxUHu52l2NXYNbAdr1+6sy974lJLd0G6F1mU/kCIKE=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.2/go.mod h1:uQ6x3sUciytdlq0CxLmvSPEgD21SBRrCZisBS396388=
+github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1 h1:L8sN5sMUEkhtdx/64bDiY2LJkO6F9EbE/Xi0lgsqA/4=
+github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1/go.mod h1:/Mke5lTQhQk5dU9wZOlaZLyGjH4PXRuln+gZM5TJDP0=
 github.com/mattn/go-isatty v0.0.16 h1:bq3VjFmv/sOjHtdEhmkEV4x1AJtvUvOJ2PFAZ5+peKQ=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

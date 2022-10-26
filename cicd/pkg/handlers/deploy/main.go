@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/koki-develop/gogogo/cicd/pkg/backend"
-	"github.com/koki-develop/gogogo/cicd/pkg/frontend"
 	"github.com/koki-develop/gogogo/cicd/pkg/infrastructure"
 	"github.com/koki-develop/gogogo/cicd/pkg/util"
 )
@@ -33,14 +32,8 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// frontend
-	_, err = frontend.Build(ctx, client, src)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	// infrastructure
-	_, err = infrastructure.Build(ctx, client, src, &infrastructure.Input{
+	_, err = infrastructure.Deploy(ctx, client, src, &infrastructure.Input{
 		AwsAccessKeyIDSecretID:     accessKeyID,
 		AwsSecretAccessKeySecretID: secretAccessKey,
 		AwsSessionTokenSecretID:    sessionToken,

@@ -7,7 +7,7 @@ import (
 	"github.com/koki-develop/gogogo/cicd/pkg/util"
 )
 
-type BuildInput struct {
+type Input struct {
 	AwsAccessKeyIDSecretID     dagger.SecretID
 	AwsSecretAccessKeySecretID dagger.SecretID
 	AwsSessionTokenSecretID    dagger.SecretID
@@ -17,7 +17,37 @@ type BuildInput struct {
 
 type BuildOutput struct{}
 
-func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *BuildInput) (*BuildOutput, error) {
+func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) (*BuildOutput, error) {
+	cont := setup(ctx, client, src, ipt)
+
+	// plan
+	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "plan"}})
+
+	// run
+	if _, err := cont.ExitCode(ctx); err != nil {
+		return nil, err
+	}
+
+	return &BuildOutput{}, nil
+}
+
+type DeployOut struct{}
+
+func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) (*DeployOut, error) {
+	cont := setup(ctx, client, src, ipt)
+
+	// apply
+	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "apply:auto-approve"}})
+
+	// run
+	if _, err := cont.ExitCode(ctx); err != nil {
+		return nil, err
+	}
+
+	return &DeployOut{}, nil
+}
+
+func setup(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) *dagger.Container {
 	tfversion := "1.2.3"
 	nodeversion := "16.x"
 
@@ -50,13 +80,5 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, i
 		Exec(dagger.ContainerExecOpts{Args: []string{"go", "get"}}).
 		Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "install", "--frozen-lockfile"}})
 
-	// plan
-	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "plan"}})
-
-	// run
-	if _, err := cont.ExitCode(ctx); err != nil {
-		return nil, err
-	}
-
-	return &BuildOutput{}, nil
+	return cont
 }

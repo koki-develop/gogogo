@@ -9,88 +9,22 @@ on:
         required: true
 
 jobs:
-  build_backend:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend
+        working-directory: cicd
     steps:
       # setup
       - name: checkout
         uses: actions/checkout@v3
-      - name: setup golang
-        uses: ./.github/actions/setup-go
+      - name: setup go
+        uses: actions/setup-go@v3
         with:
-          working-directory: backend
-      - name: setup go-task
-        uses: arduino/setup-task@v1
+          go-version-file: cicd/go.mod
+          cache: true
+          cache-dependency-path: cicd/go.sum
+
       # build
       - name: build
-        run: task build
-      - name: upload backend artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: backend-artifact
-          path: backend/dist
-
-  build_infrastructure:
-    needs: [build_backend]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    defaults:
-      run:
-        working-directory: infrastructure
-    steps:
-      # setup
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: setup node
-        uses: ./.github/actions/setup-node
-        with:
-          working-directory: infrastructure
-      - name: setup golang
-        uses: ./.github/actions/setup-go
-        with:
-          working-directory: infrastructure
-      - name: setup terraform
-        uses: ./.github/actions/setup-terraform
-      - name: aws configure
-        uses: ./.github/actions/aws-configure
-        with:
-          aws-iam-role-arn: ${{ secrets.AWS_IAM_ROLE_ARN }}
-      # build
-      - name: download backend artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: backend-artifact
-          path: backend/dist
-      - name: plan
-        env:
-          CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
-        run: yarn plan
-
-  build_frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      # setup
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: setup golang
-        uses: ./.github/actions/setup-go
-        with:
-          working-directory: frontend
-      - name: setup go-task
-        uses: arduino/setup-task@v1
-      # build
-      - name: build
-        run: task build
-      - name: upload frontend artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: frontend-artifact
-          path: frontend/dist
+        run: go run ./pkg/handlers/build

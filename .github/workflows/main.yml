@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - cicd # TODO: debug 用。消す。
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

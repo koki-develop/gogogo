@@ -19,15 +19,11 @@ type BuildOutput struct{}
 
 func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) (*BuildOutput, error) {
 	cont := setup(ctx, client, src, ipt)
-
-	// plan
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "plan"}})
 
-	// run
 	if _, err := cont.ExitCode(ctx); err != nil {
 		return nil, err
 	}
-
 	return &BuildOutput{}, nil
 }
 
@@ -35,47 +31,42 @@ type DeployOutput struct{}
 
 func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) (*DeployOutput, error) {
 	cont := setup(ctx, client, src, ipt)
-
-	// apply
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "apply:auto-approve"}})
 
-	// run
 	if _, err := cont.ExitCode(ctx); err != nil {
 		return nil, err
 	}
-
 	return &DeployOutput{}, nil
+}
+
+func newContainer(client *dagger.Client, src dagger.DirectoryID, ipt *Input) *dagger.Container {
+	return util.
+		NewContainer(client, src, "golang:1.19").
+		WithWorkdir("/app/infrastructure").
+		WithMountedDirectory("/app/backend/dist", ipt.BackendDistDirectoryID)
+}
+
+func setupSecrets(cont *dagger.Container, ipt *Input) *dagger.Container {
+	return cont.
+		WithSecretVariable("AWS_ACCESS_KEY_ID", ipt.AwsAccessKeyIDSecretID).
+		WithSecretVariable("AWS_SECRET_ACCESS_KEY", ipt.AwsSecretAccessKeySecretID).
+		WithSecretVariable("AWS_SESSION_TOKEN", ipt.AwsSessionTokenSecretID).
+		WithSecretVariable("CAT_API_KEY", ipt.CatApiKeySecretID)
 }
 
 func setup(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) *dagger.Container {
 	tfversion := "1.2.3"
 	nodeversion := "16.x"
 
-	// initialize
-	cont := util.
-		NewContainer(client, src, "golang:1.19").
-		WithWorkdir("/app/infrastructure").
-		WithMountedDirectory("/app/backend/dist", ipt.BackendDistDirectoryID)
+	cont := newContainer(client, src, ipt)
+	cont = setupSecrets(cont, ipt)
 
-	// secrets
-	cont = cont.
-		WithSecretVariable("AWS_ACCESS_KEY_ID", ipt.AwsAccessKeyIDSecretID).
-		WithSecretVariable("AWS_SECRET_ACCESS_KEY", ipt.AwsSecretAccessKeySecretID).
-		WithSecretVariable("AWS_SESSION_TOKEN", ipt.AwsSessionTokenSecretID).
-		WithSecretVariable("CAT_API_KEY", ipt.CatApiKeySecretID)
-
-	// install unzip
 	cont = cont.
 		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "update", "-qq"}}).
 		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "install", "-y", "unzip"}})
 
-	// install terraform
 	cont = util.SetupTerraform(cont, tfversion)
-
-	// install nodejs
 	cont = util.SetupNodeJS(cont, nodeversion)
-
-	// install dependencies
 	cont = cont.
 		Exec(dagger.ContainerExecOpts{Args: []string{"go", "get"}}).
 		Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "install", "--frozen-lockfile"}})

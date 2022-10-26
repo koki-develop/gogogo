@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  workflow:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -41,7 +41,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
-      - name: deploy
+      - name: ${{ inputs.workflow }}
         env:
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}

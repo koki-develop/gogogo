@@ -89,6 +89,7 @@ type newContainerInput struct {
 func newContainer(client *dagger.Client, src dagger.DirectoryID, ipt *newContainerInput) *dagger.Container {
 	return util.
 		NewContainer(client, src, "golang:1.19").
+		WithEnvVariable("CI", "true").
 		WithWorkdir("/app/infrastructure").
 		WithMountedDirectory("/app/backend/dist", ipt.BackendDistDirectoryID)
 }

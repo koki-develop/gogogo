@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"context"
-	"fmt"
 
 	"dagger.io/dagger"
 	"github.com/koki-develop/gogogo/cicd/pkg/util"
@@ -39,22 +38,10 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, i
 		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "install", "-y", "unzip"}})
 
 	// install terraform
-	cont = cont.
-		Exec(dagger.ContainerExecOpts{Args: []string{
-			"wget",
-			fmt.Sprintf("https://releases.hashicorp.com/terraform/%s/terraform_%s_linux_amd64.zip", tfversion, tfversion),
-			"-O",
-			"/tmp/terraform.zip",
-		}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"unzip", "/tmp/terraform.zip", "-d", "/usr/bin"}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"chmod", "+x", "/usr/bin/terraform"}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"terraform", "--version"}})
+	cont = util.SetupTerraform(cont, tfversion)
 
 	// install nodejs
-	cont = cont.
-		Exec(dagger.ContainerExecOpts{Args: []string{"bash", "-c", fmt.Sprintf("curl -fsSL https://deb.nodesource.com/setup_%s | bash -", nodeversion)}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "install", "-y", "nodejs"}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"npm", "install", "-g", "yarn"}})
+	cont = util.SetupNodeJS(cont, nodeversion)
 
 	// install dependencies
 	cont = cont.

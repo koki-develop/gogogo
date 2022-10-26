@@ -12,13 +12,11 @@ type BuildOutput struct {
 	DistDirectoryID dagger.DirectoryID
 }
 
-func Build(ctx context.Context, client *dagger.Client) (*BuildOutput, error) {
+func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID) (*BuildOutput, error) {
 	// initialize
-	cont, err := util.Checkout(ctx, client, "golang:1.19")
-	if err != nil {
-		return nil, err
-	}
-	cont = cont.WithWorkdir("/app/backend")
+	cont := util.
+		NewContainer(client, src, "golang:1.19").
+		WithWorkdir("/app/backend")
 
 	cont = util.SetupTask(cont)
 

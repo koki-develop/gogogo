@@ -24,6 +24,11 @@ jobs:
           go-version-file: cicd/go.mod
           cache: true
           cache-dependency-path: cicd/go.sum
+      - name: aws configure
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
       # build
       - name: build

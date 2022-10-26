@@ -10,22 +10,13 @@ import (
 type BuildOutput struct{}
 
 func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID) (*BuildOutput, error) {
-	// initialize
-	cont := util.
-		NewContainer(client, src, "golang:1.19").
-		WithWorkdir("/app/frontend")
-
-	// setup go-task
+	cont := newContainer(client, src)
 	cont = util.SetupTask(cont)
-
-	// build
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"task", "build"}})
 
-	// run
 	if _, err := cont.ExitCode(ctx); err != nil {
 		return nil, err
 	}
-
 	return &BuildOutput{}, nil
 }
 
@@ -38,35 +29,32 @@ type DeployInput struct {
 type DeployOutput struct{}
 
 func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *DeployInput) (*DeployOutput, error) {
-	// initialize
-	cont := util.
-		NewContainer(client, src, "golang:1.19").
-		WithWorkdir("/app/frontend")
+	cont := newContainer(client, src)
+	cont = setupSecrets(cont, ipt)
 
-	// secrets
-	cont = cont.
-		WithSecretVariable("AWS_ACCESS_KEY_ID", ipt.AwsAccessKeyIDSecretID).
-		WithSecretVariable("AWS_SECRET_ACCESS_KEY", ipt.AwsSecretAccessKeySecretID).
-		WithSecretVariable("AWS_SESSION_TOKEN", ipt.AwsSessionTokenSecretID)
-
-	// install unzip
 	cont = cont.
 		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "update", "-qq"}}).
 		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "install", "-y", "unzip"}})
 
-	// setup go-task
 	cont = util.SetupTask(cont)
-
-	// setup awscli
 	cont = util.SetupAWSCLI(cont)
-
-	// build
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"task", "deploy"}})
 
-	// run
 	if _, err := cont.ExitCode(ctx); err != nil {
 		return nil, err
 	}
-
 	return &DeployOutput{}, nil
+}
+
+func newContainer(client *dagger.Client, src dagger.DirectoryID) *dagger.Container {
+	return util.
+		NewContainer(client, src, "golang:1.19").
+		WithWorkdir("/app/frontend")
+}
+
+func setupSecrets(cont *dagger.Container, ipt *DeployInput) *dagger.Container {
+	return cont.
+		WithSecretVariable("AWS_ACCESS_KEY_ID", ipt.AwsAccessKeyIDSecretID).
+		WithSecretVariable("AWS_SECRET_ACCESS_KEY", ipt.AwsSecretAccessKeySecretID).
+		WithSecretVariable("AWS_SESSION_TOKEN", ipt.AwsSessionTokenSecretID)
 }

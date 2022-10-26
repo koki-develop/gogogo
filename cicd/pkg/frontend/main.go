@@ -49,7 +49,8 @@ func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, 
 func newContainer(client *dagger.Client, src dagger.DirectoryID) *dagger.Container {
 	return util.
 		NewContainer(client, src, "golang:1.19").
-		WithWorkdir("/app/frontend")
+		WithWorkdir("/app/frontend").
+		WithEnvVariable("AWS_REGION", "us-east-1")
 }
 
 func setupSecrets(cont *dagger.Container, ipt *DeployInput) *dagger.Container {

@@ -4,91 +4,42 @@ on:
   push:
     branches:
       - main
+      - cicd # TODO: debug 用。消す。
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    uses: ./.github/workflows/_build.yml
-    secrets: inherit
-
-  deploy_infrastructure:
-    needs: [build]
+  deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infrastructure
     permissions:
       id-token: write
       contents: read
+    defaults:
+      run:
+        working-directory: cicd
     steps:
       # setup
       - name: checkout
         uses: actions/checkout@v3
-      - name: setup node
-        uses: ./.github/actions/setup-node
+      - name: setup go
+        uses: actions/setup-go@v3
         with:
-          working-directory: infrastructure
-      - name: setup golang
-        uses: ./.github/actions/setup-go
-        with:
-          working-directory: infrastructure
-      - name: setup terraform
-        uses: ./.github/actions/setup-terraform
+          go-version-file: cicd/go.mod
+          cache: true
+          cache-dependency-path: cicd/go.sum
       - name: aws configure
-        uses: ./.github/actions/aws-configure
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-iam-role-arn: ${{ secrets.AWS_IAM_ROLE_ARN }}
-      # deploy
-      - name: download backend artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: backend-artifact
-          path: backend/dist
-      - name: apply
-        env:
-          CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
-        run: yarn apply:auto-approve
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
-  deploy_frontend:
-    needs: [build]
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      # setup
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: setup golang
-        uses: ./.github/actions/setup-go
-        with:
-          working-directory: frontend
-      - name: setup go-task
-        uses: arduino/setup-task@v1
-      - name: aws configure
-        uses: ./.github/actions/aws-configure
-        with:
-          aws-iam-role-arn: ${{ secrets.AWS_IAM_ROLE_ARN }}
-      # deploy
-      - name: download frontend artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: frontend-artifact
-          path: frontend/dist
       - name: deploy
-        run: task deploy-only
-      - name: clear cloudfront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id $(
-              aws cloudfront list-distributions \
-                --query 'DistributionList.Items[?Aliases.Items[0]==`go55.dev`].Id' \
-                --output text
-            ) \
-            --paths "/*"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
+          CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
+          GITHUB_BRANCH: ${{ github.ref }}
+        run: go run ./pkg/handlers/deploy

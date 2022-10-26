@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/koki-develop/gogogo/cicd/pkg/backend"
+	"github.com/koki-develop/gogogo/cicd/pkg/frontend"
 	"github.com/koki-develop/gogogo/cicd/pkg/util"
 )
 
@@ -23,6 +24,12 @@ func main() {
 
 	// backend
 	_, err = backend.Build(ctx, client, src)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// frontend
+	_, err = frontend.Build(ctx, client, src)
 	if err != nil {
 		log.Fatalln(err)
 	}

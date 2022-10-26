@@ -31,9 +31,9 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, i
 	return &BuildOutput{}, nil
 }
 
-type DeployOut struct{}
+type DeployOutput struct{}
 
-func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) (*DeployOut, error) {
+func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) (*DeployOutput, error) {
 	cont := setup(ctx, client, src, ipt)
 
 	// apply
@@ -44,7 +44,7 @@ func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, 
 		return nil, err
 	}
 
-	return &DeployOut{}, nil
+	return &DeployOutput{}, nil
 }
 
 func setup(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *Input) *dagger.Container {

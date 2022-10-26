@@ -45,7 +45,7 @@ func main() {
 		panic(err)
 	}
 
-	iout, err := infrastructure.Build(ctx, client, src, &infrastructure.Input{
+	iout, err := infrastructure.Build(ctx, client, src, &infrastructure.BuildInput{
 		AwsAccessKeyIDSecretID:     accessKeyID,
 		AwsSecretAccessKeySecretID: secretAccessKey,
 		AwsSessionTokenSecretID:    sessionToken,

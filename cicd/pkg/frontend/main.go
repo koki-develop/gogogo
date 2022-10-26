@@ -39,13 +39,13 @@ type DeployOutput struct{}
 func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *DeployInput) (*DeployOutput, error) {
 	cont := newContainer(client, src)
 	cont = cont.WithMountedDirectory("/app/frontend/dist", ipt.DistDirectoryID)
-	cont = setupSecrets(cont, ipt)
-
-	cont = cont.
-		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "update", "-qq"}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "install", "-y", "unzip"}})
-
+	cont = setupSecrets(cont, &setupSecretsInput{
+		AwsAccessKeyIDSecretID:     ipt.AwsAccessKeyIDSecretID,
+		AwsSecretAccessKeySecretID: ipt.AwsSecretAccessKeySecretID,
+		AwsSessionTokenSecretID:    ipt.AwsSessionTokenSecretID,
+	})
 	cont = util.SetupTask(cont)
+	cont = util.SetupUnzip(cont)
 	cont = util.SetupAWSCLI(cont)
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"task", "deploy-only"}})
 
@@ -62,7 +62,13 @@ func newContainer(client *dagger.Client, src dagger.DirectoryID) *dagger.Contain
 		WithEnvVariable("AWS_REGION", "us-east-1")
 }
 
-func setupSecrets(cont *dagger.Container, ipt *DeployInput) *dagger.Container {
+type setupSecretsInput struct {
+	AwsAccessKeyIDSecretID     dagger.SecretID
+	AwsSecretAccessKeySecretID dagger.SecretID
+	AwsSessionTokenSecretID    dagger.SecretID
+}
+
+func setupSecrets(cont *dagger.Container, ipt *setupSecretsInput) *dagger.Container {
 	return cont.
 		WithSecretVariable("AWS_ACCESS_KEY_ID", ipt.AwsAccessKeyIDSecretID).
 		WithSecretVariable("AWS_SECRET_ACCESS_KEY", ipt.AwsSecretAccessKeySecretID).

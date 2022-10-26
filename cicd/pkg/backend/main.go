@@ -12,7 +12,9 @@ type BuildOutput struct {
 }
 
 func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID) (*BuildOutput, error) {
-	cont := newContainer(client, src)
+	cont := util.
+		NewContainer(client, src, "golang:1.19").
+		WithWorkdir("/app/backend")
 	cont = util.SetupTask(cont)
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"task", "build"}})
 
@@ -25,10 +27,4 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID) (
 		return nil, err
 	}
 	return &BuildOutput{DistDirectoryID: d}, nil
-}
-
-func newContainer(client *dagger.Client, src dagger.DirectoryID) *dagger.Container {
-	return util.
-		NewContainer(client, src, "golang:1.19").
-		WithWorkdir("/app/backend")
 }

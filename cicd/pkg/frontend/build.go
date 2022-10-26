@@ -43,6 +43,12 @@ func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, 
 		NewContainer(client, src, "golang:1.19").
 		WithWorkdir("/app/frontend")
 
+	// secrets
+	cont = cont.
+		WithSecretVariable("AWS_ACCESS_KEY_ID", ipt.AwsAccessKeyIDSecretID).
+		WithSecretVariable("AWS_SECRET_ACCESS_KEY", ipt.AwsSecretAccessKeySecretID).
+		WithSecretVariable("AWS_SESSION_TOKEN", ipt.AwsSessionTokenSecretID)
+
 	// install unzip
 	cont = cont.
 		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "update", "-qq"}}).

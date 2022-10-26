@@ -21,9 +21,7 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID) (
 	cont = util.SetupTask(cont)
 
 	// build
-	cont = cont.Exec(dagger.ContainerExecOpts{
-		Args: []string{"task", "build"},
-	})
+	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"task", "build"}})
 
 	// get dist directory
 	d, err := cont.Directory("/app/backend/dist").ID(ctx)

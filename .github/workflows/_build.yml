@@ -27,4 +27,6 @@ jobs:
 
       # build
       - name: build
+        env:
+          GITHUB_BRANCH: ${{ github.ref }}
         run: go run ./pkg/handlers/build

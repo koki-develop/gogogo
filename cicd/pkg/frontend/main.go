@@ -18,7 +18,7 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID) (
 
 	d, err := cont.Directory("/app/frontend/dist").ID(ctx)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if _, err := cont.ExitCode(ctx); err != nil {

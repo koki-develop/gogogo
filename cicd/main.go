@@ -36,54 +36,36 @@ func main() {
 	sessionToken := util.Must(client.Host().EnvVariable("AWS_SESSION_TOKEN").Secret().ID(ctx))
 	catApiKey := util.Must(client.Host().EnvVariable("CAT_API_KEY").Secret().ID(ctx))
 
-	src, err := util.Checkout(ctx, client, branch)
-	if err != nil {
-		panic(err)
-	}
+	src := util.Must(util.Checkout(ctx, client, branch))
 
-	bout, err := backend.Build(ctx, client, src)
-	if err != nil {
-		panic(err)
-	}
+	bout := util.Must(backend.Build(ctx, client, src))
 
-	_, err = infrastructure.Build(ctx, client, src, &infrastructure.BuildInput{
+	_ = util.Must(infrastructure.Build(ctx, client, src, &infrastructure.BuildInput{
 		AwsAccessKeyIDSecretID:     accessKeyID,
 		AwsSecretAccessKeySecretID: secretAccessKey,
 		AwsSessionTokenSecretID:    sessionToken,
 		CatApiKeySecretID:          catApiKey,
 		BackendDistDirectoryID:     bout.DistDirectoryID,
-	})
-	if err != nil {
-		panic(err)
-	}
+	}))
 
-	fout, err := frontend.Build(ctx, client, src)
-	if err != nil {
-		panic(err)
-	}
+	fout := util.Must(frontend.Build(ctx, client, src))
 
 	if workflow != "deploy" {
 		return
 	}
 
-	_, err = infrastructure.Deploy(ctx, client, src, &infrastructure.DeployInput{
+	_ = util.Must(infrastructure.Deploy(ctx, client, src, &infrastructure.DeployInput{
 		AwsAccessKeyIDSecretID:     accessKeyID,
 		AwsSecretAccessKeySecretID: secretAccessKey,
 		AwsSessionTokenSecretID:    sessionToken,
 		CatApiKeySecretID:          catApiKey,
 		BackendDistDirectoryID:     bout.DistDirectoryID,
-	})
-	if err != nil {
-		panic(err)
-	}
+	}))
 
-	_, err = frontend.Deploy(ctx, client, src, &frontend.DeployInput{
+	_ = util.Must(frontend.Deploy(ctx, client, src, &frontend.DeployInput{
 		AwsAccessKeyIDSecretID:     accessKeyID,
 		AwsSecretAccessKeySecretID: secretAccessKey,
 		AwsSessionTokenSecretID:    sessionToken,
 		DistDirectoryID:            fout.DistDirectoryID,
-	})
-	if err != nil {
-		panic(err)
-	}
+	}))
 }

@@ -28,6 +28,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer client.Close()
 
 	branch := os.Getenv("GITHUB_BRANCH")
 	accessKeyID := util.Must(client.Host().EnvVariable("AWS_ACCESS_KEY_ID").Secret().ID(ctx))

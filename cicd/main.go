@@ -45,7 +45,7 @@ func main() {
 		panic(err)
 	}
 
-	iout, err := infrastructure.Build(ctx, client, src, &infrastructure.BuildInput{
+	_, err = infrastructure.Build(ctx, client, src, &infrastructure.BuildInput{
 		AwsAccessKeyIDSecretID:     accessKeyID,
 		AwsSecretAccessKeySecretID: secretAccessKey,
 		AwsSessionTokenSecretID:    sessionToken,
@@ -71,8 +71,6 @@ func main() {
 		AwsSessionTokenSecretID:    sessionToken,
 		CatApiKeySecretID:          catApiKey,
 		BackendDistDirectoryID:     bout.DistDirectoryID,
-		NodeModulesDirectoryID:     iout.NodeModulesDirectoryID,
-		PkgModDirectoryID:          iout.PkgModDirectoryID,
 	})
 	if err != nil {
 		panic(err)

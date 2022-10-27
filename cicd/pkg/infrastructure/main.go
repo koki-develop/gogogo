@@ -15,10 +15,7 @@ type BuildInput struct {
 	BackendDistDirectoryID     dagger.DirectoryID
 }
 
-type BuildOutput struct {
-	NodeModulesDirectoryID dagger.DirectoryID
-	PkgModDirectoryID      dagger.DirectoryID
-}
+type BuildOutput struct{}
 
 func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *BuildInput) (*BuildOutput, error) {
 	cont := newContainer(client, src, &newContainerInput{BackendDistDirectoryID: ipt.BackendDistDirectoryID})
@@ -29,25 +26,12 @@ func Build(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, i
 		CatApiKeySecretID:          ipt.CatApiKeySecretID,
 	})
 	cont = setupDependencies(cont)
-
-	pkgm, err := cont.Directory("/go/pkg/mod").ID(ctx)
-	if err != nil {
-		return nil, err
-	}
-	nm, err := cont.Directory("/app/infrastructure/node_modules").ID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	cont = cont.Exec(dagger.ContainerExecOpts{Args: []string{"yarn", "plan"}})
 
 	if _, err := cont.ExitCode(ctx); err != nil {
 		return nil, err
 	}
-	return &BuildOutput{
-		NodeModulesDirectoryID: nm,
-		PkgModDirectoryID:      pkgm,
-	}, nil
+	return &BuildOutput{}, nil
 }
 
 type DeployInput struct {
@@ -56,17 +40,12 @@ type DeployInput struct {
 	AwsSessionTokenSecretID    dagger.SecretID
 	CatApiKeySecretID          dagger.SecretID
 	BackendDistDirectoryID     dagger.DirectoryID
-	NodeModulesDirectoryID     dagger.DirectoryID
-	PkgModDirectoryID          dagger.DirectoryID
 }
 
 type DeployOutput struct{}
 
 func Deploy(ctx context.Context, client *dagger.Client, src dagger.DirectoryID, ipt *DeployInput) (*DeployOutput, error) {
 	cont := newContainer(client, src, &newContainerInput{BackendDistDirectoryID: ipt.BackendDistDirectoryID})
-	cont = cont.
-		WithMountedDirectory("/app/infrastructure/node_modules", ipt.NodeModulesDirectoryID).
-		WithMountedDirectory("/go/pkg/mod", ipt.PkgModDirectoryID)
 	cont = setupSecrets(cont, &setupSecretsInput{
 		AwsAccessKeyIDSecretID:     ipt.AwsAccessKeyIDSecretID,
 		AwsSecretAccessKeySecretID: ipt.AwsSecretAccessKeySecretID,

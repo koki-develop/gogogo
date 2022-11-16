@@ -8,7 +8,7 @@ require (
 	github.com/aws/jsii-runtime-go v1.70.0
 	github.com/hashicorp/cdktf-provider-archive-go/archive v1.0.2
 	github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.40
-	github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1
+	github.com/hashicorp/terraform-cdk-go/cdktf v0.14.1
 )
 
 require (

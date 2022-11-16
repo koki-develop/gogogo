@@ -7,6 +7,6 @@
     "apply:auto-approve": "cdktf apply --auto-approve"
   },
   "devDependencies": {
-    "cdktf-cli": "0.13.1"
+    "cdktf-cli": "0.14.1"
   }
 }

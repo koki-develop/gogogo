@@ -1,13 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
-	"github.com/koki-develop/gogogo/cicd/pkg/backend"
-	"github.com/koki-develop/gogogo/cicd/pkg/frontend"
-	"github.com/koki-develop/gogogo/cicd/pkg/infrastructure"
-	"github.com/koki-develop/gogogo/cicd/pkg/util"
+	"dagger.io/dagger"
 )
 
 func main() {
@@ -24,48 +23,43 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctx, client, err := util.NewClient()
+	// initialize client
+	ctx := context.Background()
+	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
 	if err != nil {
 		panic(err)
 	}
 	defer client.Close()
 
-	branch := os.Getenv("GITHUB_BRANCH")
-	accessKeyID := util.Must(client.Host().EnvVariable("AWS_ACCESS_KEY_ID").Secret().ID(ctx))
-	secretAccessKey := util.Must(client.Host().EnvVariable("AWS_SECRET_ACCESS_KEY").Secret().ID(ctx))
-	sessionToken := util.Must(client.Host().EnvVariable("AWS_SESSION_TOKEN").Secret().ID(ctx))
-	catApiKey := util.Must(client.Host().EnvVariable("CAT_API_KEY").Secret().ID(ctx))
+	// get secrets
+	// accessKeyID := client.Host().EnvVariable("AWS_ACCESS_KEY_ID").Secret()
+	// secretAccessKey := client.Host().EnvVariable("AWS_SECRET_ACCESS_KEY").Secret()
+	// sessionToken := client.Host().EnvVariable("AWS_SESSION_TOKEN").Secret()
+	// catApiKey := client.Host().EnvVariable("CAT_API_KEY").Secret()
 
-	src := util.Must(util.Checkout(ctx, client, branch))
-
-	bout := util.Must(backend.Build(ctx, client, src))
-
-	_ = util.Must(infrastructure.Build(ctx, client, src, &infrastructure.BuildInput{
-		AwsAccessKeyIDSecretID:     accessKeyID,
-		AwsSecretAccessKeySecretID: secretAccessKey,
-		AwsSessionTokenSecretID:    sessionToken,
-		CatApiKeySecretID:          catApiKey,
-		BackendDistDirectoryID:     bout.DistDirectoryID,
-	}))
-
-	fout := util.Must(frontend.Build(ctx, client, src))
-
-	if workflow != "deploy" {
-		return
+	// get src
+	root, err := filepath.Abs("..")
+	if err != nil {
+		panic(err)
 	}
+	src := client.Host().Directory(root)
 
-	_ = util.Must(infrastructure.Deploy(ctx, client, src, &infrastructure.DeployInput{
-		AwsAccessKeyIDSecretID:     accessKeyID,
-		AwsSecretAccessKeySecretID: secretAccessKey,
-		AwsSessionTokenSecretID:    sessionToken,
-		CatApiKeySecretID:          catApiKey,
-		BackendDistDirectoryID:     bout.DistDirectoryID,
-	}))
-
-	_ = util.Must(frontend.Deploy(ctx, client, src, &frontend.DeployInput{
-		AwsAccessKeyIDSecretID:     accessKeyID,
-		AwsSecretAccessKeySecretID: secretAccessKey,
-		AwsSessionTokenSecretID:    sessionToken,
-		DistDirectoryID:            fout.DistDirectoryID,
-	}))
+	// backend
+	{
+		// checkout
+		cont := client.Container().From("golang:1.19").
+			WithMountedDirectory("/app", src).
+			WithWorkdir("/app/backend")
+		// setup environment variablees
+		cont = cont.WithEnvVariable("GOARCH", "amd64").
+			WithEnvVariable("GOOS", "linux")
+		// build
+		cont = cont.
+			WithExec([]string{"go", "build", "-ldflags", "-s -w", "-o", "dist/api", "./pkg/handlers/api/lambda"}).
+			WithExec([]string{"go", "build", "-ldflags", "-s -w", "-o", "dist/updatecats", "./pkg/handlers/updatecats"})
+		// run pipeline
+		if _, err := cont.ExitCode(ctx); err != nil {
+			panic(err)
+		}
+	}
 }

@@ -108,6 +108,8 @@ github.com/hashicorp/terraform-cdk-go/cdktf v0.12.2 h1:OoxUHu52l2NXYNbAdr1+6sy97
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.2/go.mod h1:uQ6x3sUciytdlq0CxLmvSPEgD21SBRrCZisBS396388=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1 h1:L8sN5sMUEkhtdx/64bDiY2LJkO6F9EbE/Xi0lgsqA/4=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1/go.mod h1:/Mke5lTQhQk5dU9wZOlaZLyGjH4PXRuln+gZM5TJDP0=
+github.com/hashicorp/terraform-cdk-go/cdktf v0.14.1 h1:3DHqxFlbRw9COBvn2Q8vftVJBS4FJmQc7CLzVUmwgMQ=
+github.com/hashicorp/terraform-cdk-go/cdktf v0.14.1/go.mod h1:/Mke5lTQhQk5dU9wZOlaZLyGjH4PXRuln+gZM5TJDP0=
 github.com/mattn/go-isatty v0.0.16 h1:bq3VjFmv/sOjHtdEhmkEV4x1AJtvUvOJ2PFAZ5+peKQ=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

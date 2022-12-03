@@ -50,6 +50,7 @@ github.com/aws/constructs-go/constructs/v10 v10.1.109/go.mod h1:pyPg5NpVy3IEJ2y0
 github.com/aws/constructs-go/constructs/v10 v10.1.111 h1:5UvenlKBbAe+SUYU0z8+E2vKReG03V3qNr2YixB+BEQ=
 github.com/aws/constructs-go/constructs/v10 v10.1.111/go.mod h1:utyhwXdG4CxzHORjVi92o3h0x8H59sZZqSR3dsrzp8w=
 github.com/aws/constructs-go/constructs/v10 v10.1.113/go.mod h1:utyhwXdG4CxzHORjVi92o3h0x8H59sZZqSR3dsrzp8w=
+github.com/aws/constructs-go/constructs/v10 v10.1.120/go.mod h1:oTVXTVKdXCnJID4eAEUmO4tpyevdt6kyjopkBR2DDYI=
 github.com/aws/constructs-go/constructs/v10 v10.1.131 h1:+QZJLXZYccJK4Awi+3EVL4epbJehyTIQ1Ngy1CaqF2k=
 github.com/aws/constructs-go/constructs/v10 v10.1.131/go.mod h1:oTVXTVKdXCnJID4eAEUmO4tpyevdt6kyjopkBR2DDYI=
 github.com/aws/constructs-go/constructs/v10 v10.1.136 h1:4SNzzlpMcCP+XbnlnhhIlElHZK2sP10zMacp2N69xiE=
@@ -99,6 +100,8 @@ github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.37 h1:Ookv+prOs01POQirQbO
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.37/go.mod h1:3chp5dE6O0gsc65iIFhaOYCprcKuPdOlqSGF4nHTdVg=
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.40 h1:ws1sEuwmipag0djacBOHQOqAJApiuk91mxhjNSIetKY=
 github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.40/go.mod h1:t9tRhANxSsJDXdRRXbjqb8jPfe2VLiB2hxCOYHCRxoY=
+github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.52 h1:m68rz51Glwx7ui3mMLrn+uc1Dn/KiHEZr16kBv7SQEg=
+github.com/hashicorp/cdktf-provider-aws-go/aws/v9 v9.0.52/go.mod h1:bAGs5NoNTXWGmq2mcaTWXXfWpmPOaitZkbq8Q5ZDx2M=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.11.2/go.mod h1:a8+QPHntwVyJLVedf3wnodH7roqSphfVCsAzPFGtVpk=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0 h1:xNbMaZdhB5mKbrc7eSu6cIUcwJkhhDzmJPRhaNgAOCY=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0/go.mod h1:jaEAIWsKKD4EDjXCpaZAsFhHmxP4y7giBC5lX6YU69A=
@@ -106,6 +109,7 @@ github.com/hashicorp/terraform-cdk-go/cdktf v0.12.1 h1:ZJTlGxrWszVp52NomHNzIQJK1
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.1/go.mod h1:wYwFPosz5g+kX4WeNALHBzQyMeToiu+pBPr5I9kyWm0=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.2 h1:OoxUHu52l2NXYNbAdr1+6sy974lJLd0G6F1mU/kCIKE=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.12.2/go.mod h1:uQ6x3sUciytdlq0CxLmvSPEgD21SBRrCZisBS396388=
+github.com/hashicorp/terraform-cdk-go/cdktf v0.12.3/go.mod h1:/Mke5lTQhQk5dU9wZOlaZLyGjH4PXRuln+gZM5TJDP0=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1 h1:L8sN5sMUEkhtdx/64bDiY2LJkO6F9EbE/Xi0lgsqA/4=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.13.1/go.mod h1:/Mke5lTQhQk5dU9wZOlaZLyGjH4PXRuln+gZM5TJDP0=
 github.com/hashicorp/terraform-cdk-go/cdktf v0.14.1 h1:3DHqxFlbRw9COBvn2Q8vftVJBS4FJmQc7CLzVUmwgMQ=

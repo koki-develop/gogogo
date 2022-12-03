@@ -4,6 +4,6 @@ import "dagger.io/dagger"
 
 func SetupUnzip(cont *dagger.Container) *dagger.Container {
 	return cont.
-		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "update", "-qq"}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"apt", "install", "-y", "unzip"}})
+		WithExec([]string{"apt", "update", "-qq"}).
+		WithExec([]string{"apt", "install", "-y", "unzip"})
 }

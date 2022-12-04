@@ -48,4 +48,4 @@ jobs:
           AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
           CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
           GITHUB_BRANCH: ${{ github.ref }}
-        run: go run . ${{ inputs.workflow }}
+        run: go run . all ${{ inputs.workflow }}

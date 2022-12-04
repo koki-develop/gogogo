@@ -64,6 +64,9 @@ func main() {
 	m.AddFunc("text/html", html.Minify)
 	m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
 
+	if err := os.MkdirAll("dist", os.ModePerm); err != nil {
+		log.Fatalln(err)
+	}
 	f, err := os.Create("dist/index.html")
 	if err != nil {
 		log.Fatalln(err)

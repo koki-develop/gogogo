@@ -115,22 +115,41 @@ func main() {
 
 	// frontend
 	if component == "frontend" {
+		// checkout
+		cont := client.Container().
+			From("golang:1.19").
+			WithMountedDirectory("/app", src).
+			WithWorkdir("/app/frontend")
+
 		if workflow == "build" {
-			// checkout
-			cont := client.Container().
-				From("golang:1.19").
-				WithMountedDirectory("/app", src).
-				WithWorkdir("/app/frontend")
-			// setup environment variables
-			cont = cont.
-				WithEnvVariable("AWS_REGION", "us-east-1")
-			// build
 			cont = cont.
 				WithExec([]string{"go", "run", "./html"}).
 				WithExec([]string{"bash", "-c", "cp $(go env GOROOT)/misc/wasm/wasm_exec.js ./dist/wasm_exec.js"}).
 				WithEnvVariable("GOOS", "js").
 				WithEnvVariable("GOARCH", "wasm").
 				WithExec([]string{"go", "build", "-o", "./dist/main.wasm"})
+			fout := client.Directory().WithDirectory("frontend/dist", cont.Directory("./dist"))
+			if _, err := fout.Export(ctx, root); err != nil {
+				panic(err)
+			}
+		}
+		if workflow == "deploy" {
+			// install tools
+			cont = util.SetupUnzip(cont)
+			cont = util.SetupAWSCLI(cont)
+			// setup environment variables and secrets
+			cont = cont.
+				WithEnvVariable("AWS_REGION", "us-east-1").
+				WithSecretVariable("AWS_ACCESS_KEY_ID", accessKeyID).
+				WithSecretVariable("AWS_SECRET_ACCESS_KEY", secretAccessKey).
+				WithSecretVariable("AWS_SESSION_TOKEN", sessionToken)
+			// deploy
+			cont = cont.
+				WithExec([]string{"aws", "s3", "cp", "./dist/index.html", "s3://gogogo-frontend-files/index.html"}).
+				WithExec([]string{"aws", "s3", "cp", "./dist/wasm_exec.js", "s3://gogogo-frontend-files/wasm_exec.js"}).
+				// 参考: https://stackoverflow.com/questions/51033550/how-to-manually-gzip-files-for-web-and-amazon-cloudfront
+				WithExec([]string{"gzip", "./dist/main.wasm"}).
+				WithExec([]string{"aws", "s3", "cp", "./dist/main.wasm.gz", "s3://gogogo-frontend-files/main.wasm", "--content-encoding", "gzip", "--content-type", "application/wasm"})
 			// exec pipeline
 			if _, err := cont.ExitCode(ctx); err != nil {
 				panic(err)

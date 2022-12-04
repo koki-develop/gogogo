@@ -99,4 +99,27 @@ func main() {
 			panic(err)
 		}
 	}
+
+	// frontend build
+	{
+		// checkout
+		cont := client.Container().
+			From("golang:1.19").
+			WithMountedDirectory("/app", src).
+			WithWorkdir("/app/frontend")
+		// setup environment variables
+		cont = cont.
+			WithEnvVariable("AWS_REGION", "us-east-1").
+			WithEnvVariable("GOOS", "js").
+			WithEnvVariable("GOARCH", "wasm")
+		// build
+		cont = cont.
+			WithExec([]string{"go", "run", "./html"}).
+			WithExec([]string{"cp", "$(go env GOROOT)/misc/wasm/wasm_exec.js", "./dist/wasm_exec.js"}).
+			WithExec([]string{"go", "build", "-o", "./dist/main.wasm"})
+		// exec pipeline
+		if _, err := cont.ExitCode(ctx); err != nil {
+			panic(err)
+		}
+	}
 }

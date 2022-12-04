@@ -18,7 +18,7 @@ func main() {
 
 	component := os.Args[1]
 	switch component {
-	case "frontend", "backend", "infrastructure":
+	case "all", "frontend", "backend", "infrastructure":
 	default:
 		fmt.Printf("unknown component: %s\n", component)
 		os.Exit(1)
@@ -53,7 +53,7 @@ func main() {
 	src := client.Host().Directory(root)
 
 	// backend
-	if component == "backend" {
+	if component == "all" || component == "backend" {
 		if workflow == "build" {
 			// checkout
 			cont := client.Container().
@@ -77,7 +77,7 @@ func main() {
 	}
 
 	// infrastructure
-	if component == "infrastructure" {
+	if component == "all" || component == "infrastructure" {
 		// checkout
 		cont := client.Container().
 			From("golang:1.19").
@@ -114,7 +114,7 @@ func main() {
 	}
 
 	// frontend
-	if component == "frontend" {
+	if component == "all" || component == "frontend" {
 		// checkout
 		cont := client.Container().
 			From("golang:1.19").

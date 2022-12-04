@@ -78,35 +78,39 @@ func main() {
 
 	// infrastructure
 	if component == "infrastructure" {
+		// checkout
+		cont := client.Container().
+			From("golang:1.19").
+			WithMountedDirectory("/app", src).
+			WithWorkdir("/app/infrastructure")
+		// setup environment variables and secrets
+		cont = cont.
+			WithEnvVariable("CI", "true").
+			WithSecretVariable("AWS_ACCESS_KEY_ID", accessKeyID).
+			WithSecretVariable("AWS_SECRET_ACCESS_KEY", secretAccessKey).
+			WithSecretVariable("AWS_SESSION_TOKEN", sessionToken).
+			WithSecretVariable("CAT_API_KEY", catApiKey)
+		// install tools
+		cont = util.SetupUnzip(cont)
+		cont = util.SetupTerraform(cont, "1.2.3")
+		cont = util.SetupNodeJS(cont, "16.x")
+		// install dependencies
+		cont = cont.
+			WithExec([]string{"go", "get"}).
+			WithExec([]string{"yarn", "install", "--frozen-lockfile"})
+
 		if workflow == "build" {
-			// checkout
-			cont := client.Container().
-				From("golang:1.19").
-				WithMountedDirectory("/app", src).
-				WithWorkdir("/app/infrastructure")
-			// setup environment variables and secrets
-			cont = cont.
-				WithEnvVariable("CI", "true").
-				WithSecretVariable("AWS_ACCESS_KEY_ID", accessKeyID).
-				WithSecretVariable("AWS_SECRET_ACCESS_KEY", secretAccessKey).
-				WithSecretVariable("AWS_SESSION_TOKEN", sessionToken).
-				WithSecretVariable("CAT_API_KEY", catApiKey)
-			// install tools
-			cont = util.SetupUnzip(cont)
-			cont = util.SetupTerraform(cont, "1.2.3")
-			cont = util.SetupNodeJS(cont, "16.x")
-			// install dependencies
-			cont = cont.
-				WithExec([]string{"go", "get"}).
-				WithExec([]string{"yarn", "install", "--frozen-lockfile"})
 			// plan
 			cont = cont.WithExec([]string{"yarn", "run", "cdktf", "plan"})
-			// exec pipeline
-			if _, err := cont.ExitCode(ctx); err != nil {
-				panic(err)
-			}
 		}
-
+		if workflow == "deploy" {
+			// apply
+			cont = cont.WithExec([]string{"yarn", "run", "cdktf", "apply", "--auto-approve"})
+		}
+		// exec pipeline
+		if _, err := cont.ExitCode(ctx); err != nil {
+			panic(err)
+		}
 	}
 
 	// frontend

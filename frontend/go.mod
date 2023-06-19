@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/hexops/vecty v0.6.0
-	github.com/koki-develop/gogogo/backend v0.0.0-00010101000000-000000000000
+	github.com/koki-develop/gogogo/backend v0.0.0-20230615232836-b787e366d61d
 	github.com/tdewolff/minify/v2 v2.12.4
 )
 
